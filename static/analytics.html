@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTSL AI | Analytics</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="page-transition" id="page-transition"></div>
+    <div class="app-container">
+        <aside class="sidebar glass">
+            <div class="logo">RTSL AI</div>
+            <nav>
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <a href="detection.html" class="nav-item"><i class="fas fa-camera"></i><span>Detection</span></a>
+                <a href="analytics.html" class="nav-item active"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+                <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            </nav>
+            <div class="nav-divider"></div>
+            <a href="#" id="logout-btn" class="nav-item logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>Analytics</h1>
+                    <p>Detection statistics and performance trends</p>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <div class="notif-bell" id="notif-bell"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+                    <div class="notif-dropdown glass-premium" id="notif-dropdown">
+                        <div class="notif-header"><span>Notifications</span><button id="notif-clear">Clear all</button></div>
+                        <div id="notif-list"></div>
+                    </div>
+                    <button id="theme-toggle" class="btn btn-secondary btn-icon"><i class="fas fa-moon"></i></button>
+                </div>
+            </div>
+
+            <div class="analytics-summary">
+                <div class="analytics-stat card-premium">
+                    <div class="analytics-stat-value" id="analytics-total">0</div>
+                    <div class="analytics-stat-label">Total Detections</div>
+                </div>
+                <div class="analytics-stat">
+                    <div class="analytics-stat-value" id="analytics-today">0</div>
+                    <div class="analytics-stat-label">Today</div>
+                </div>
+                <div class="analytics-stat" style="border-color:rgba(192,132,252,0.2);">
+                    <div class="analytics-stat-value" id="analytics-models">0</div>
+                    <div class="analytics-stat-label">Models Used</div>
+                </div>
+                <div class="analytics-stat" style="border-color:rgba(34,197,94,0.2);">
+                    <div class="analytics-stat-value" id="analytics-avg-conf">0%</div>
+                    <div class="analytics-stat-label">Avg Confidence</div>
+                </div>
+            </div>
+
+            <div style="margin-top:var(--space-5);">
+                <div class="tabs" id="period-tabs" style="display:inline-flex;">
+                    <button class="tab active" data-period="daily">Daily</button>
+                    <button class="tab" data-period="weekly">Weekly</button>
+                    <button class="tab" data-period="monthly">Monthly</button>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-4);margin-top:var(--space-4);">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-wave-square" style="color:var(--accent-primary);margin-right:8px;"></i>Detection Trend</h3>
+                        <span class="badge badge-ghost" id="trend-range-label">Last 7 days</span>
+                    </div>
+                    <div class="chart-container" style="height:240px;"><canvas id="chart-trend"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-bullseye" style="color:#c084fc;margin-right:8px;"></i>Accuracy Distribution</h3>
+                    </div>
+                    <div class="chart-container" style="height:240px;"><canvas id="chart-confidence"></canvas></div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-4);">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-chart-pie" style="color:#f59e0b;margin-right:8px;"></i>Model Comparison</h3>
+                    </div>
+                    <div class="chart-container" style="height:220px;"><canvas id="chart-models"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-calendar-alt" style="color:#22c55e;margin-right:8px;"></i>Weekly Activity</h3>
+                    </div>
+                    <div class="chart-container" style="height:220px;"><canvas id="chart-weekly"></canvas></div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:3fr 2fr;gap:var(--space-4);margin-top:var(--space-4);">
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-trophy" style="color:var(--accent-primary);margin-right:8px;"></i>Gesture Leaderboard</h3>
+                        <span class="badge badge-ghost">Top gestures</span>
+                    </div>
+                    <div id="gesture-leaderboard" style="max-height:320px;overflow-y:auto;">
+                        <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem;">No data yet</div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <h3><i class="fas fa-download" style="color:var(--accent-primary);margin-right:8px;"></i>Export Data</h3>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-2) 0;">
+                        <button class="btn-export" id="export-csv"><i class="fas fa-file-csv" style="color:#22c55e;"></i> Export as CSV</button>
+                        <button class="btn-export" id="export-json"><i class="fas fa-file-code" style="color:#f59e0b;"></i> Export as JSON</button>
+                        <button class="btn-export" id="export-png"><i class="fas fa-file-image" style="color:#c084fc;"></i> Export Charts as PNG</button>
+                        <div style="margin-top:var(--space-3);padding:var(--space-3);border-radius:var(--radius-md);background:rgba(0,242,255,0.04);border:1px solid rgba(0,242,255,0.08);">
+                            <div style="font-size:0.82rem;font-weight:600;margin-bottom:4px;"><i class="fas fa-info-circle" style="color:var(--accent-primary);margin-right:6px;"></i>Quick Stats</div>
+                            <div style="font-size:0.75rem;color:var(--text-dim);line-height:1.6;">
+                                Total detections: <strong id="qs-total">0</strong><br>
+                                Unique gestures: <strong id="qs-unique">0</strong><br>
+                                Best accuracy: <strong id="qs-best">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+<script>
+let charts = {};
+let allHistory = [];
+let allAnalytics = {};
+
+const toastContainer = document.getElementById('toast-container');
+function showToast(msg, type='success') {
+    const t = document.createElement('div');
+    const icons = {success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',warning:'fa-exclamation-triangle'};
+    t.className = 'toast toast-' + type;
+    t.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]||icons.info}"></i></div><div>${msg}</div>`;
+    toastContainer.appendChild(t);
+    setTimeout(() => { t.classList.add('toast-leave'); setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+/* ─── Notification Center ─── */
+const notifQueue = [];
+const notifBell = document.getElementById('notif-bell');
+const notifDropdown = document.getElementById('notif-dropdown');
+const notifList = document.getElementById('notif-list');
+const notifDot = notifBell.querySelector('.badge-dot');
+let notifOpen = false;
+
+function addNotification(icon, text) {
+    notifQueue.unshift({ icon, text, time: new Date().toLocaleTimeString() });
+    if (notifQueue.length > 20) notifQueue.pop();
+    renderNotifications();
+    notifDot.classList.add('show');
+}
+function renderNotifications() {
+    if (!notifQueue.length) { notifList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.82rem;">No notifications</div>'; return; }
+    notifList.innerHTML = notifQueue.map(n => `
+        <div class="notif-item unread">
+            <div class="notif-icon">${n.icon}</div>
+            <div class="notif-body"><p>${n.text}</p><div class="notif-time">${n.time}</div></div>
+        </div>
+    `).join('');
+}
+renderNotifications();
+notifBell.addEventListener('click', (e) => { e.stopPropagation(); notifOpen = !notifOpen; notifDropdown.classList.toggle('open', notifOpen); if (notifOpen) notifDot.classList.remove('show'); });
+document.addEventListener('click', () => { notifDropdown.classList.remove('open'); notifOpen = false; });
+document.getElementById('notif-clear').addEventListener('click', (e) => { e.stopPropagation(); notifQueue.length = 0; renderNotifications(); notifDot.classList.remove('show'); });
+
+/* ─── Page Transition ─── */
+document.querySelectorAll('a:not([href^="#"]):not([href*="javascript"])').forEach(a => {
+    a.addEventListener('click', function(e) {
+        if (this.hostname === window.location.hostname && this.pathname !== window.location.pathname) {
+            e.preventDefault();
+            const t = document.getElementById('page-transition');
+            t.classList.add('active');
+            setTimeout(() => { window.location.href = this.href; }, 250);
+        }
+    });
+});
+
+const CHART_COLORS = {
+    primary: 'rgba(0,242,255,0.8)', secondary: 'rgba(192,132,252,0.8)',
+    green: 'rgba(34,197,94,0.8)', amber: 'rgba(245,158,11,0.8)',
+    red: 'rgba(239,68,68,0.8)', pink: 'rgba(236,72,153,0.8)'
+};
+const CHART_BG = (c) => c.replace('0.8', '0.15');
+
+function isDark() { return !document.body.classList.contains('light-mode'); }
+function textColor() { return isDark() ? '#e2e8f0' : '#1e293b'; }
+function gridColor() { return isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('asl_user'));
+    if (!user) { window.location.href = 'index.html'; return; }
+
+    const themeToggle = document.getElementById('theme-toggle');
+    if (localStorage.getItem('asl_theme') === 'light') {
+        document.body.classList.add('light-mode'); themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const l = document.body.classList.contains('light-mode');
+        themeToggle.innerHTML = l ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('asl_theme', l ? 'light' : 'dark');
+        Object.values(charts).forEach(c => { if (c) c.destroy(); });
+        charts = {};
+        loadAnalytics();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith('asl_')) keys.push(k); }
+        keys.forEach(k => localStorage.removeItem(k));
+        window.location.href = 'index.html';
+    });
+
+    // Period tabs
+    document.querySelectorAll('#period-tabs .tab').forEach(t => {
+        t.addEventListener('click', () => {
+            document.querySelectorAll('#period-tabs .tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            renderTrendChart(allHistory);
+        });
+    });
+
+    document.getElementById('export-csv').addEventListener('click', exportCSV);
+    document.getElementById('export-json').addEventListener('click', exportJSON);
+    document.getElementById('export-png').addEventListener('click', exportPNG);
+
+    loadAnalytics();
+});
+
+async function loadAnalytics() {
+    try {
+        const user = JSON.parse(localStorage.getItem('asl_user') || '{}');
+        const uid = user.user_id || 0;
+        const [anRes, histRes] = await Promise.all([
+            fetch(`/analytics?user_id=${uid}`),
+            fetch(`/history?user_id=${uid}`)
+        ]);
+        allAnalytics = await anRes.json();
+        allHistory = await histRes.json();
+
+        document.getElementById('analytics-total').textContent = allAnalytics.total;
+
+        const today = new Date().toDateString();
+        const todayCount = allHistory.filter(h => h.timestamp && new Date(h.timestamp).toDateString() === today).length;
+        document.getElementById('analytics-today').textContent = todayCount;
+
+        document.getElementById('analytics-models').textContent = allAnalytics.model_usage ? Object.keys(allAnalytics.model_usage).length : '-';
+
+        if (allHistory.length > 0) {
+            const avg = allHistory.reduce((s, h) => s + Number(h.confidence), 0) / allHistory.length * 100;
+            document.getElementById('analytics-avg-conf').textContent = avg.toFixed(1) + '%';
+            const best = Math.max(...allHistory.map(h => h.confidence)) * 100;
+            document.getElementById('qs-best').textContent = best.toFixed(1) + '%';
+        }
+        document.getElementById('qs-total').textContent = allAnalytics.total;
+        document.getElementById('qs-unique').textContent = allAnalytics.labels.length;
+
+        renderTrendChart(allHistory);
+        renderConfidenceChart(allHistory);
+        renderModelChart(allAnalytics.model_usage || {});
+        renderWeeklyChart(allHistory);
+        renderGestureLeaderboard(allAnalytics.labels, allAnalytics.data);
+
+        addNotification('<i class="fas fa-sync-alt"></i>', 'Analytics updated — ' + allAnalytics.total + ' total detections');
+    } catch (err) { showToast('Failed to load analytics', 'error'); }
+}
+
+function getPeriodData(history) {
+    const activeTab = document.querySelector('#period-tabs .tab.active');
+    const period = activeTab ? activeTab.dataset.period : 'daily';
+    const label = document.getElementById('trend-range-label');
+
+    let grouped = {};
+    history.forEach(h => {
+        if (!h.timestamp) return;
+        const d = new Date(h.timestamp);
+        let key;
+        if (period === 'daily') key = d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+        else if (period === 'weekly') {
+            const start = new Date(d);
+            start.setDate(d.getDate() - d.getDay());
+            key = start.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+        } else {
+            key = d.toLocaleDateString('en', { month: 'short', year: 'numeric' });
+        }
+        grouped[key] = (grouped[key] || 0) + 1;
+    });
+
+    if (period === 'daily') label.textContent = 'Daily breakdown';
+    else if (period === 'weekly') label.textContent = 'Weekly breakdown';
+    else label.textContent = 'Monthly breakdown';
+
+    return { labels: Object.keys(grouped), values: Object.values(grouped) };
+}
+
+function renderTrendChart(history) {
+    const ctx = document.getElementById('chart-trend').getContext('2d');
+    if (charts.trend) { charts.trend.destroy(); }
+    const { labels, values } = getPeriodData(history);
+
+    charts.trend = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Detections',
+                data: values,
+                borderColor: CHART_COLORS.primary,
+                backgroundColor: CHART_BG(CHART_COLORS.primary),
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: CHART_COLORS.primary,
+                pointBorderColor: isDark() ? '#0a0f1e' : '#fff',
+                pointBorderWidth: 2,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: textColor(), maxTicksLimit: 12, maxRotation: 0 }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { color: textColor(), stepSize: 1 }, grid: { color: gridColor() } }
+            }
+        }
+    });
+}
+
+function renderConfidenceChart(history) {
+    const ctx = document.getElementById('chart-confidence').getContext('2d');
+    if (charts.conf) charts.conf.destroy();
+    const bins = [0,10,20,30,40,50,60,70,80,90,100];
+    const counts = new Array(bins.length-1).fill(0);
+    history.forEach(h => {
+        const pct = h.confidence * 100;
+        for (let i = 0; i < bins.length-1; i++) { if (pct >= bins[i] && pct < bins[i+1]) { counts[i]++; break; } }
+    });
+    charts.conf = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: bins.slice(0,-1).map(b => b + '%'),
+            datasets: [{
+                label: 'Count',
+                data: counts,
+                backgroundColor: counts.map((_,i) => i < 4 ? CHART_COLORS.red : i < 7 ? CHART_COLORS.amber : CHART_COLORS.green),
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: textColor() }, grid: { display: false } },
+                y: { ticks: { color: textColor(), stepSize: 1 }, grid: { color: gridColor() } }
+            }
+        }
+    });
+}
+
+function renderModelChart(modelUsage) {
+    const ctx = document.getElementById('chart-models').getContext('2d');
+    if (charts.models) charts.models.destroy();
+    const labels = Object.keys(modelUsage).length ? Object.keys(modelUsage) : ['YOLO', 'Keras'];
+    const vals = Object.keys(modelUsage).length ? Object.values(modelUsage) : [1, 1];
+    charts.models = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels,
+            datasets: [{ data: vals, backgroundColor: [CHART_COLORS.primary, CHART_COLORS.secondary, CHART_COLORS.green, CHART_COLORS.amber], borderWidth: 0 }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: { position: 'bottom', labels: { color: textColor(), padding: 16, usePointStyle: true, pointStyle: 'circle' } }
+            }
+        }
+    });
+}
+
+function renderWeeklyChart(history) {
+    const ctx = document.getElementById('chart-weekly').getContext('2d');
+    if (charts.weekly) charts.weekly.destroy();
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const counts = new Array(7).fill(0);
+    history.forEach(h => { if (h.timestamp) { const d = new Date(h.timestamp); if (!isNaN(d)) counts[d.getDay()]++; } });
+    charts.weekly = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: days,
+            datasets: [{
+                label: 'Detections', data: counts,
+                backgroundColor: days.map(() => CHART_COLORS.primary),
+                borderRadius: 6, borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: textColor() }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { color: textColor(), stepSize: 1 }, grid: { color: gridColor() } }
+            }
+        }
+    });
+}
+
+function renderGestureLeaderboard(labels, data) {
+    const container = document.getElementById('gesture-leaderboard');
+    if (!labels.length) { container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem;">No gesture data yet</div>'; return; }
+    const sorted = labels.map((l, i) => ({ label: l, value: data[i] })).sort((a, b) => b.value - a.value);
+    const maxVal = sorted[0].value;
+    const barColors = ['', 'purple', 'green', 'orange', '', '', '', '', '', ''];
+
+    container.innerHTML = sorted.map((item, i) => `
+        <div class="leaderboard-item">
+            <div class="leaderboard-rank ${i < 3 ? 'top3' : ''}">${i + 1}</div>
+            <div class="leaderboard-bar-wrap">
+                <div class="leaderboard-bar ${barColors[i] || ''}" style="width:${(item.value / maxVal) * 100}%"></div>
+                <span class="leaderboard-label">${item.label}</span>
+            </div>
+            <div class="leaderboard-count">${item.value}</div>
+        </div>
+    `).join('');
+}
+
+function exportCSV() {
+    if (!allHistory.length) { showToast('No data to export', 'warning'); return; }
+    let csv = 'Alphabet,Confidence,Model Type,Timestamp\n';
+    allHistory.forEach(h => { csv += `${h.alphabet},${h.confidence},${h.model_type},${h.timestamp}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'rtsl-history.csv'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV exported');
+}
+
+function exportJSON() {
+    if (!allHistory.length) { showToast('No data to export', 'warning'); return; }
+    const blob = new Blob([JSON.stringify(allHistory, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'rtsl-history.json'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('JSON exported');
+}
+
+function exportPNG() {
+    const canvas = document.querySelectorAll('canvas');
+    if (!canvas.length) { showToast('No charts to export', 'warning'); return; }
+    const composite = document.createElement('canvas');
+    const ctx = composite.getContext('2d');
+    let totalHeight = 0;
+    const gaps = 20;
+    canvas.forEach(c => totalHeight += c.height + gaps);
+    composite.width = canvas[0].width;
+    composite.height = totalHeight;
+
+    let y = 0;
+    canvas.forEach(c => {
+        ctx.fillStyle = isDark() ? '#0a0f1e' : '#ffffff';
+        ctx.fillRect(0, y, composite.width, c.height + gaps);
+        ctx.drawImage(c, 0, y);
+        y += c.height + gaps;
+    });
+
+    const link = document.createElement('a');
+    link.download = 'rtsl-charts.png';
+    link.href = composite.toDataURL('image/png');
+    link.click();
+    showToast('Charts exported as PNG');
+}
+</script>
+</body>
+</html>

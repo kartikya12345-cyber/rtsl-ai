@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTSL AI — Real-Time Sign Language Detection</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/asl-reference.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="landing-page">
+
+<!-- FLOATING AI BACKGROUND ELEMENTS -->
+<div class="landing-orb landing-orb-1"></div>
+<div class="landing-orb landing-orb-2"></div>
+<div class="landing-orb landing-orb-3"></div>
+<div class="landing-particles" id="particles"></div>
+
+<!-- ─── NAVBAR ─── -->
+<nav class="landing-nav" id="landing-nav">
+  <div class="landing-nav-inner">
+    <a href="/" class="landing-logo">
+      <div class="landing-logo-icon"><i class="fas fa-hand-peace"></i></div>
+      <span>RTSL <span class="text-accent">AI</span></span>
+    </a>
+    <div class="landing-nav-links" id="nav-links">
+      <a href="#features" class="landing-nav-link">Features</a>
+      <a href="#models" class="landing-nav-link">Models</a>
+      <a href="#about" class="landing-nav-link">About</a>
+      <a href="#contact" class="landing-nav-link">Contact</a>
+    </div>
+    <div class="landing-nav-actions">
+      <button class="landing-theme-btn" id="landing-theme-toggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+      <a href="index.html" class="landing-btn-outline">Login</a>
+      <a href="index.html?signup=1" class="landing-btn-primary">Get Started</a>
+      <button class="landing-mobile-toggle" id="mobile-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="landing-hero" id="hero">
+  <div class="landing-hero-grid">
+    <div class="landing-hero-content">
+      <div class="landing-badge">
+        <span class="landing-badge-dot"></span>
+        AI-Powered Sign Language Detection
+      </div>
+      <h1 class="landing-hero-title">
+        Real-Time Sign Language<br>
+        <span class="gradient-text">Detection &amp; Recognition</span>
+      </h1>
+      <p class="landing-hero-desc">
+        RTSL AI uses YOLO, MediaPipe, and Deep Learning models to recognize sign language gestures in real time and convert them into meaningful predictions.
+      </p>
+      <div class="landing-hero-actions">
+        <a href="index.html" class="landing-btn-primary landing-btn-lg"><i class="fas fa-play"></i> Start Detection</a>
+        <a href="#features" class="landing-btn-ghost landing-btn-lg">Learn More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="landing-hero-stats">
+        <div class="landing-hero-stat"><span class="hero-stat-num" data-target="12450">0</span><span class="hero-stat-label">Total Detections</span></div>
+        <div class="landing-hero-stat"><span class="hero-stat-num" data-target="34">0</span><span class="hero-stat-label">Supported Gestures</span></div>
+        <div class="landing-hero-stat"><span class="hero-stat-num" data-target="3">0</span><span class="hero-stat-label">Active Models</span></div>
+        <div class="landing-hero-stat"><span class="hero-stat-num" data-target="96">0</span><span class="hero-stat-label">Detection Accuracy</span></div>
+      </div>
+    </div>
+    <div class="landing-hero-visual">
+      <div class="landing-hero-card glass-strong">
+        <div class="hero-card-header">
+          <span class="hero-card-dot red"></span>
+          <span class="hero-card-dot yellow"></span>
+          <span class="hero-card-dot green"></span>
+        </div>
+        <div class="hero-card-body">
+          <div class="hero-ai-hand">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="hg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00f2ff"/><stop offset="100%" stop-color="#0891b2"/></linearGradient>
+                <linearGradient id="hg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7000ff"/><stop offset="100%" stop-color="#c084fc"/></linearGradient>
+                <filter id="hg"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#00f2ff" flood-opacity="0.4"/></filter>
+              </defs>
+              <rect x="65" y="85" width="70" height="60" rx="10" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+              <rect x="52" y="70" width="8" height="50" rx="4" fill="url(#hg1)" filter="url(#hg)" opacity="0.9"/>
+              <rect x="65" y="30" width="8" height="90" rx="4" fill="url(#hg1)" filter="url(#hg)" opacity="0.9"/>
+              <rect x="78" y="18" width="8" height="100" rx="4" fill="url(#hg1)" filter="url(#hg)" opacity="0.9"/>
+              <rect x="91" y="30" width="8" height="90" rx="4" fill="url(#hg2)" filter="url(#hg)" opacity="0.7"/>
+              <rect x="104" y="55" width="8" height="60" rx="4" fill="url(#hg2)" filter="url(#hg)" opacity="0.5"/>
+              <circle cx="56" cy="65" r="5" fill="#00f2ff" opacity="0.6"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/></circle>
+              <circle cx="69" cy="27" r="5" fill="#00f2ff" opacity="0.6"><animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.5s" repeatCount="indefinite"/></circle>
+              <circle cx="82" cy="15" r="5" fill="#00f2ff" opacity="0.6"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="1.8s" repeatCount="indefinite"/></circle>
+              <circle cx="95" cy="27" r="5" fill="#c084fc" opacity="0.6"><animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.2s" repeatCount="indefinite"/></circle>
+              <circle cx="108" cy="52" r="5" fill="#c084fc" opacity="0.6"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/></circle>
+              <text x="100" y="170" text-anchor="middle" font-size="36" font-weight="700" fill="url(#hg1)" font-family="system-ui">AI</text>
+            </svg>
+          </div>
+          <div class="hero-scanlines"></div>
+          <div class="hero-status">
+            <span class="hero-status-dot"></span> Live Detection Active
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="landing-section" id="features">
+  <div class="landing-section-header">
+    <span class="landing-section-tag">Features</span>
+    <h2>Powerful Capabilities for<br><span class="gradient-text">Sign Language Recognition</span></h2>
+    <p>Everything you need to detect, learn, and analyze sign language gestures</p>
+  </div>
+  <div class="landing-features-grid">
+    <div class="landing-feature-card glass" data-delay="0">
+      <div class="feature-icon" style="--ic:#00f2ff"><i class="fas fa-bolt"></i></div>
+      <h3>Real-Time Detection</h3>
+      <p>Detect sign language gestures instantly from your webcam with low-latency AI inference.</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="100">
+      <div class="feature-icon" style="--ic:#10b981"><i class="fas fa-font"></i></div>
+      <h3>YOLO Alphabet Recognition</h3>
+      <p>State-of-the-art YOLO model trained to recognize all 26 ASL alphabet letters (A-Z).</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="200">
+      <div class="feature-icon" style="--ic:#c084fc"><i class="fas fa-brain"></i></div>
+      <h3>Deep Learning Gestures</h3>
+      <p>Keras-based LSTM model recognizes whole-word gestures including &quot;Hello&quot;, &quot;Thanks&quot;, &quot;Yes&quot;, &quot;No&quot; and more.</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="300">
+      <div class="feature-icon" style="--ic:#f59e0b"><i class="fas fa-random"></i></div>
+      <h3>Multi-Model Switching</h3>
+      <p>Seamlessly switch between YOLO alphabet and Keras gesture models during live detection.</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="400">
+      <div class="feature-icon" style="--ic:#ff6bcd"><i class="fas fa-chart-bar"></i></div>
+      <h3>Detection Analytics</h3>
+      <p>Comprehensive analytics dashboard showing detection frequency, accuracy trends, and model performance.</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="500">
+      <div class="feature-icon" style="--ic:#00f2ff"><i class="fas fa-history"></i></div>
+      <h3>Detection History</h3>
+      <p>Complete history of all your detections with timestamps, confidence scores, and model metadata.</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="600">
+      <div class="feature-icon" style="--ic:#10b981"><i class="fas fa-user"></i></div>
+      <h3>User Profiles</h3>
+      <p>Personalized user profiles with custom preferences, theme settings, and detection statistics.</p>
+    </div>
+    <div class="landing-feature-card glass" data-delay="700">
+      <div class="feature-icon" style="--ic:#c084fc"><i class="fas fa-graduation-cap"></i></div>
+      <h3>Learning Mode</h3>
+      <p>Interactive learning mode with A-Z hand reference guides, favorites, and session tracking.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MODELS ─── -->
+<section class="landing-section landing-section-dark" id="models">
+  <div class="landing-section-header">
+    <span class="landing-section-tag">Models</span>
+    <h2>Two Powerful Models<br><span class="gradient-text">One Unified System</span></h2>
+    <p>RTSL AI combines YOLO computer vision with Deep Learning sequence models</p>
+  </div>
+  <div class="landing-models-grid">
+    <div class="landing-model-card glass">
+      <div class="model-card-header">
+        <div class="model-card-icon" style="background:rgba(0,242,255,0.12);color:#00f2ff;"><i class="fas fa-cube"></i></div>
+        <div>
+          <h3>YOLO Model</h3>
+          <span class="model-card-subtitle">Alphabet Detection (A-Z)</span>
+        </div>
+        <span class="model-card-badge">26 Classes</span>
+      </div>
+      <div class="model-card-body">
+        <div class="model-alphabet-grid">
+          <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+          <span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
+          <span>K</span><span>L</span><span>M</span><span>N</span><span>O</span>
+          <span>P</span><span>Q</span><span>R</span><span>S</span><span>T</span>
+          <span>U</span><span>V</span><span>W</span><span>X</span><span>Y</span>
+          <span>Z</span>
+        </div>
+      </div>
+    </div>
+    <div class="landing-model-card glass">
+      <div class="model-card-header">
+        <div class="model-card-icon" style="background:rgba(192,132,252,0.12);color:#c084fc;"><i class="fas fa-project-diagram"></i></div>
+        <div>
+          <h3>Keras Model</h3>
+          <span class="model-card-subtitle">Gesture Detection</span>
+        </div>
+        <span class="model-card-badge">34 Gestures</span>
+      </div>
+      <div class="model-card-body">
+        <div class="model-gesture-list">
+          <span>Hello</span><span>Thanks</span><span>Yes</span><span>No</span>
+          <span>Please</span><span>Sorry</span><span>Help</span><span>Good</span>
+          <span>Bad</span><span>Stop</span><span>Eat</span><span>Drink</span>
+          <span>Read</span><span>Write</span><span>Play</span><span>Love You</span>
+          <span>Monday</span><span>Tuesday</span><span>Wednesday</span><span>Thursday</span>
+          <span>Friday</span><span>Saturday</span><span>Sunday</span>
+          <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+          <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="landing-section" id="about">
+  <div class="landing-section-header">
+    <span class="landing-section-tag">How It Works</span>
+    <h2>Detect Sign Language in<br><span class="gradient-text">Four Simple Steps</span></h2>
+    <p>From camera input to meaningful predictions in milliseconds</p>
+  </div>
+  <div class="landing-steps">
+    <div class="landing-step glass" data-delay="0">
+      <div class="step-number">01</div>
+      <div class="step-icon"><i class="fas fa-camera"></i></div>
+      <h3>Open Camera</h3>
+      <p>Grant webcam access and position yourself in the camera frame with good lighting.</p>
+    </div>
+    <div class="landing-step-connector"><i class="fas fa-chevron-right"></i></div>
+    <div class="landing-step glass" data-delay="100">
+      <div class="step-number">02</div>
+      <div class="step-icon"><i class="fas fa-hand-peace"></i></div>
+      <h3>Show Gesture</h3>
+      <p>Make a sign language gesture clearly within the detection region of the camera view.</p>
+    </div>
+    <div class="landing-step-connector"><i class="fas fa-chevron-right"></i></div>
+    <div class="landing-step glass" data-delay="200">
+      <div class="step-number">03</div>
+      <div class="step-icon"><i class="fas fa-microchip"></i></div>
+      <h3>AI Detects Gesture</h3>
+      <p>YOLO or Keras model processes the frame and classifies the gesture in real time.</p>
+    </div>
+    <div class="landing-step-connector"><i class="fas fa-chevron-right"></i></div>
+    <div class="landing-step glass" data-delay="300">
+      <div class="step-number">04</div>
+      <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+      <h3>View Prediction</h3>
+      <p>The recognized letter or word appears instantly with confidence score and metadata.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COUNTERS ─── -->
+<section class="landing-section landing-section-dark">
+  <div class="landing-counters">
+    <div class="landing-counter-item">
+      <span class="counter-icon"><i class="fas fa-eye"></i></span>
+      <span class="counter-num" data-target="12450">0</span>
+      <span class="counter-label">Total Detections</span>
+    </div>
+    <div class="landing-counter-item">
+      <span class="counter-icon"><i class="fas fa-hand-peace"></i></span>
+      <span class="counter-num" data-target="34">0</span>
+      <span class="counter-label">Supported Gestures</span>
+    </div>
+    <div class="landing-counter-item">
+      <span class="counter-icon"><i class="fas fa-microchip"></i></span>
+      <span class="counter-num" data-target="3">0</span>
+      <span class="counter-label">Active Models</span>
+    </div>
+    <div class="landing-counter-item">
+      <span class="counter-icon"><i class="fas fa-bullseye"></i></span>
+      <span class="counter-num" data-target="96">0</span>
+      <span class="counter-label">Detection Accuracy</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ASL ALPHABET REFERENCE GUIDE ─── -->
+<section class="asl-section" id="asl-reference">
+  <h2 class="asl-section-title">ASL Alphabet Learning Guide</h2>
+  <p class="asl-section-sub">Interactive reference for all 26 American Sign Language letters</p>
+
+  <!-- Reference Poster -->
+  <div class="asl-poster-wrap glass-strong">
+    <img src="reference/asl-reference.png" alt="ASL Alphabet Reference Chart" loading="lazy">
+  </div>
+
+  <!-- Controls -->
+  <div class="asl-controls">
+    <div class="asl-search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="asl-search" placeholder="Search letter (A-Z)..." maxlength="1" autocomplete="off">
+    </div>
+    <div class="asl-filters" id="asl-filters">
+      <button class="asl-filter-btn active" data-filter="all">Show All</button>
+      <button class="asl-filter-btn" data-filter="a-f">A-F</button>
+      <button class="asl-filter-btn" data-filter="g-l">G-L</button>
+      <button class="asl-filter-btn" data-filter="m-r">M-R</button>
+      <button class="asl-filter-btn" data-filter="s-z">S-Z</button>
+    </div>
+    <div class="asl-actions">
+      <button class="asl-action-btn" id="asl-random"><i class="fas fa-shuffle"></i> Random</button>
+      <button class="asl-action-btn" id="asl-quiz-btn"><i class="fas fa-question-circle"></i> Quiz</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="asl-stats">
+    <div class="asl-stat"><span class="asl-stat-val">26</span><span class="asl-stat-lbl">Letters</span></div>
+    <div class="asl-stat"><span class="asl-stat-val" id="asl-stat-favs">0</span><span class="asl-stat-lbl">Favorites</span></div>
+    <div class="asl-stat"><span class="asl-stat-val" id="asl-stat-learned">0</span><span class="asl-stat-lbl">Learned</span></div>
+  </div>
+
+  <!-- Recently Viewed -->
+  <div class="asl-recent" id="asl-recent"></div>
+
+  <!-- Grid -->
+  <div class="asl-grid" id="asl-grid"></div>
+</section>
+
+<!-- ─── KERAS GESTURE REFERENCE GUIDE ─── -->
+<section class="asl-section" id="keras-reference">
+  <h2 class="asl-section-title">Gesture Reference Library</h2>
+  <p class="asl-section-sub">Reference chart for numbers, days, and common sign language gestures</p>
+  <div class="asl-poster-wrap glass-strong">
+    <img src="reference/keras-reference.png" alt="Gesture Reference Chart" loading="lazy">
+  </div>
+</section>
+
+<!-- ─── CONTACT US ─── -->
+<section class="landing-section" id="contact">
+  <div class="contact-neural-bg" id="contact-neural-bg">
+    <canvas id="neural-canvas"></canvas>
+  </div>
+  <div class="landing-section-header">
+    <span class="landing-section-tag">Contact Us</span>
+    <h2>Get in<br><span class="gradient-text">Touch</span></h2>
+    <p>Have questions, suggestions, or want to collaborate? We'd love to hear from you.</p>
+  </div>
+
+  <div class="contact-grid">
+    <!-- Left: Info + Social -->
+    <div class="contact-info-col">
+      <div class="contact-cards">
+        <div class="contact-card glass">
+          <div class="contact-icon-circle"><i class="fas fa-map-marker-alt"></i></div>
+          <h4>Address</h4>
+          <p>Nagaland University<br>Kohima Campus<br>Meriema, Nagaland<br>India</p>
+        </div>
+        <div class="contact-card glass">
+          <div class="contact-icon-circle"><i class="fas fa-envelope"></i></div>
+          <h4>Email</h4>
+          <p><a href="mailto:support@rtslai.com">support@rtslai.com</a></p>
+        </div>
+        <div class="contact-card glass">
+          <div class="contact-icon-circle"><i class="fas fa-phone-alt"></i></div>
+          <h4>Phone</h4>
+          <p>+91 7007046016<br>+91 9648503019</p>
+        </div>
+        <div class="contact-card glass">
+          <div class="contact-icon-circle"><i class="fas fa-globe"></i></div>
+          <h4>Website</h4>
+          <p><a href="http://www.rtslai.com" target="_blank">www.rtslai.com</a></p>
+        </div>
+        <div class="contact-card glass">
+          <div class="contact-icon-circle"><i class="fas fa-clock"></i></div>
+          <h4>Working Hours</h4>
+          <p>Monday – Friday<br>9:00 AM – 6:00 PM (IST)</p>
+        </div>
+      </div>
+      <div class="contact-social">
+        <a href="#" class="contact-social-icon" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="#" class="contact-social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="contact-social-icon" aria-label="Gmail"><i class="fab fa-google"></i></a>
+        <a href="#" class="contact-social-icon" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+        <a href="#" class="contact-social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="contact-social-icon" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="contact-form-col">
+      <div class="contact-form-card glass-strong">
+        <form id="contact-form" novalidate>
+          <div class="contact-form-group floating">
+            <input type="text" id="cf-name" class="contact-input" placeholder=" " required>
+            <label for="cf-name">Full Name</label>
+          </div>
+          <div class="contact-form-group floating">
+            <input type="email" id="cf-email" class="contact-input" placeholder=" " required>
+            <label for="cf-email">Email Address</label>
+          </div>
+          <div class="contact-form-group floating">
+            <input type="text" id="cf-subject" class="contact-input" placeholder=" " required>
+            <label for="cf-subject">Subject</label>
+          </div>
+          <div class="contact-form-group floating">
+            <textarea id="cf-message" class="contact-input contact-textarea" rows="5" placeholder=" " required></textarea>
+            <label for="cf-message">Message</label>
+          </div>
+          <button type="submit" class="contact-submit" id="contact-submit">
+            <span class="contact-submit-text">Send Message <i class="fas fa-paper-plane"></i></span>
+            <span class="contact-submit-loader"><i class="fas fa-circle-notch fa-spin"></i></span>
+            <span class="contact-submit-check"><i class="fas fa-check-circle"></i></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-actions">
+    <a href="#" class="contact-action-btn glass"><i class="fas fa-question-circle"></i> FAQ</a>
+    <a href="#" class="contact-action-btn glass"><i class="fas fa-book"></i> Documentation</a>
+    <a href="#" class="contact-action-btn glass"><i class="fas fa-bug"></i> Report Bug</a>
+    <a href="#" class="contact-action-btn glass"><i class="fas fa-lightbulb"></i> Feature Request</a>
+    <a href="#" class="contact-action-btn glass"><i class="fas fa-handshake"></i> Collaborate With Us</a>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="landing-section" id="cta-section">
+  <div class="landing-cta glass-strong">
+    <div class="landing-cta-content">
+      <h2>Start Detecting Sign Language<br>with <span class="gradient-text">AI Today</span></h2>
+      <p>Join RTSL AI and experience real-time sign language detection powered by cutting-edge deep learning models.</p>
+      <div class="landing-cta-actions">
+        <a href="index.html" class="landing-btn-primary landing-btn-lg"><i class="fas fa-rocket"></i> Get Started Free</a>
+        <a href="index.html" class="landing-btn-outline landing-btn-lg">Login</a>
+      </div>
+    </div>
+    <div class="landing-cta-graphic">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00f2ff"/><stop offset="100%" stop-color="#7000ff"/></linearGradient>
+        </defs>
+        <rect x="10" y="10" width="100" height="100" rx="20" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <circle cx="60" cy="40" r="18" fill="none" stroke="url(#cg)" stroke-width="3" opacity="0.6"><animate attributeName="r" values="18;22;18" dur="3s" repeatCount="indefinite"/></circle>
+        <circle cx="60" cy="40" r="5" fill="#00f2ff"><animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite"/></circle>
+        <line x1="60" y1="55" x2="60" y2="82" stroke="url(#cg)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="60" y1="65" x2="42" y2="75" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="65" x2="78" y2="75" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="82" x2="45" y2="100" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="60" y1="82" x2="75" y2="100" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="landing-footer">
+  <div class="landing-footer-inner">
+    <div class="landing-footer-brand">
+      <div class="landing-logo">
+        <div class="landing-logo-icon"><i class="fas fa-hand-peace"></i></div>
+        <span>RTSL <span class="text-accent">AI</span></span>
+      </div>
+      <p>Real-Time Sign Language Detection &amp; Recognition System powered by YOLO, MediaPipe, and Deep Learning.</p>
+    </div>
+    <div class="landing-footer-links">
+      <div class="landing-footer-col">
+        <h4>Quick Links</h4>
+        <a href="#hero">Home</a>
+        <a href="#features">Features</a>
+        <a href="#models">Models</a>
+        <a href="#contact">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+  <div class="landing-footer-bottom">
+    <span>&copy; 2026 RTSL AI. All Rights Reserved.</span>
+  </div>
+</footer>
+
+<script src="js/sign-data.js"></script>
+<script src="js/landing.js"></script>
+<script src="js/asl-reference.js"></script>
+
+<!-- ASL Reference Modal -->
+<div class="asl-modal" id="asl-modal">
+  <div class="asl-modal-content glass-strong">
+    <button class="asl-modal-close"><i class="fas fa-times"></i></button>
+    <div class="asl-modal-visual"><span class="asl-modal-letter-badge">A</span></div>
+    <div class="asl-modal-body">
+      <div class="asl-modal-letter-name">Letter A</div>
+      <p class="asl-modal-desc">Description</p>
+      <div class="asl-modal-section">
+        <h4><i class="fas fa-hand-pointer"></i> Finger Positioning</h4>
+        <p id="modal-fingers"></p>
+      </div>
+      <div class="asl-modal-section">
+        <h4><i class="fas fa-lightbulb"></i> Learning Tip</h4>
+        <p id="modal-tip"></p>
+      </div>
+      <div class="asl-modal-actions">
+        <button class="asl-modal-btn" id="modal-fav-btn"><i class="far fa-star"></i> Favorite</button>
+        <button class="asl-modal-btn primary" id="modal-practice-btn"><i class="fas fa-redo"></i> Practice</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASL Quiz Overlay -->
+<div class="asl-quiz-overlay" id="asl-quiz">
+  <div class="asl-quiz-card glass-strong"></div>
+</div>
+</body>
+</html>

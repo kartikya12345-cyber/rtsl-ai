@@ -1,0 +1,6 @@
+asl.db
+firebase-key.json
+__pycache__/
+*.pyc
+.env
+*.db

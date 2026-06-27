@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTSL AI | Real-Time Detection</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/asl-reference.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="page-transition" id="page-transition"></div>
+<div class="app-container">
+  <aside class="sidebar glass">
+    <div class="logo">RTSL AI</div>
+    <nav style="flex:1;">
+      <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+      <a href="detection.html" class="nav-item active"><i class="fas fa-camera"></i><span>Detection</span></a>
+      <a href="analytics.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+      <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+    <div style="border-top:1px solid var(--glass-border);padding-top:20px;">
+      <a href="#" id="logout-btn" class="nav-item" style="color:#ef4444;"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Real-Time Detection</h1>
+        <p>AI is <span id="ai-status-text">processing</span> live webcam feed</p>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <span class="status-badge online" id="det-status-badge"><span class="status-indicator status-online" id="det-status-dot"></span> <span id="det-status-label">Running</span></span>
+        <select id="model-select" class="glass" style="padding:8px 16px;color:white;border-radius:8px;outline:none;cursor:pointer;background:var(--bg-card);border:1px solid var(--glass-border);"></select>
+        <div class="notif-bell" id="notif-bell"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+        <div class="notif-dropdown glass-premium" id="notif-dropdown">
+          <div class="notif-header"><span>Notifications</span><button id="notif-clear">Clear all</button></div>
+          <div id="notif-list"></div>
+        </div>
+        <button id="theme-toggle" class="btn btn-secondary btn-icon"><i class="fas fa-moon"></i></button>
+      </div>
+    </div>
+
+    <div class="session-bar">
+      <div class="session-stat"><i class="fas fa-clock" style="color:var(--accent-primary);"></i> Session: <strong id="session-timer">00:00</strong></div>
+      <div class="session-stat"><i class="fas fa-camera"></i> Frames: <strong id="session-frames">0</strong></div>
+      <div class="session-stat"><i class="fas fa-bullseye"></i> Detections: <strong id="session-detections">0</strong></div>
+      <div class="quality-score"><span style="font-size:0.78rem;color:var(--text-dim);">Quality</span>
+        <div class="quality-score-bar"><div class="quality-score-fill good" id="quality-bar" style="width:85%"></div></div>
+        <span id="quality-label" style="font-size:0.75rem;font-weight:600;color:#22c55e;">Good</span>
+      </div>
+      <div class="camera-health"><span class="dot green"></span> <span id="camera-health-label">Camera Active</span></div>
+    </div>
+
+    <div class="gallery-strip" id="gallery-strip" style="margin-bottom:var(--space-3);"></div>
+
+    <div class="detection-container">
+      <!-- LEFT: Webcam -->
+      <div class="webcam-wrapper" id="webcam-wrapper">
+        <video id="webcam-video" autoplay playsinline muted></video>
+        <canvas id="webcam-canvas" style="display:none;"></canvas>
+        <canvas id="overlay-canvas"></canvas>
+        <div class="roi-box"></div>
+        <div class="fps-counter" id="fps-counter">0 FPS</div>
+        <div class="control-bar">
+          <button class="icon-btn" id="record-btn" title="Record (R)"><i class="fas fa-circle"></i></button>
+          <button class="icon-btn" id="screenshot-btn" title="Screenshot (S)"><i class="fas fa-camera"></i></button>
+          <button class="icon-btn" id="fullscreen-btn" title="Fullscreen (F)"><i class="fas fa-expand"></i></button>
+          <button class="icon-btn" id="camera-toggle" title="Toggle Camera (C)"><i class="fas fa-video"></i></button>
+        </div>
+        <div class="prediction-overlay">
+          <div class="prediction-card glass">
+            <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:5px;">PREDICTION</p>
+            <div class="alphabet-display" id="pred-alphabet">-</div>
+          </div>
+          <div class="prediction-card glass">
+            <p style="font-size:0.7rem;color:var(--text-dim);margin-bottom:5px;">CONFIDENCE</p>
+            <div id="pred-conf" style="font-size:1.5rem;font-weight:700;color:#10b981;">0%</div>
+            <div style="width:100%;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:10px;">
+              <div id="conf-bar" style="width:0%;height:100%;background:#10b981;border-radius:2px;transition:width 0.3s ease;"></div>
+            </div>
+          </div>
+        </div>
+        <div id="keras-info" class="keras-info" style="display:none;">
+          <div class="keras-info-row"><span class="ki-label">Model:</span><span id="ki-model-name" class="ki-value">-</span></div>
+          <div class="keras-info-row"><span class="ki-label">Hands:</span><span id="ki-hand-count" class="ki-value">0</span></div>
+          <div class="keras-info-row"><span class="ki-label">Left:</span><span id="ki-hand-left" class="ki-value">-</span></div>
+          <div class="keras-info-row"><span class="ki-label">Right:</span><span id="ki-hand-right" class="ki-value">-</span></div>
+          <div class="keras-info-row"><span class="ki-label">Buffer:</span><div class="buffer-track"><div id="buffer-bar" class="buffer-fill" style="width:0%"></div></div><span id="buffer-text" class="ki-value">0/45</span></div>
+        </div>
+        <div class="shortcuts-hint">R: Record · S: Screenshot · F: Fullscreen · C: Camera · L: Learning</div>
+      </div>
+
+      <!-- Learning Panel (below camera) -->
+      <div class="learning-below glass" id="learning-below">
+        <div class="learning-below-header">
+          <span><i class="fas fa-hand-peace" style="color:var(--accent-primary);"></i> <span id="sl-title">Sign Language Alphabet</span> <span style="font-size:0.65rem;color:var(--text-dim);" id="sl-subtitle"></span></span>
+          <div style="display:flex;gap:4px;">
+            <button class="icon-btn sl-mode-btn" id="sl-mode-letters" title="Letters" style="width:28px;height:28px;font-size:0.7rem;background:var(--accent-primary);color:#000;"><i class="fas fa-font"></i></button>
+            <button class="icon-btn sl-mode-btn" id="sl-mode-words" title="Gestures" style="width:28px;height:28px;font-size:0.7rem;"><i class="fas fa-comment"></i></button>
+          </div>
+        </div>
+        <div class="sl-search" style="margin-bottom:8px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="sl-search" placeholder="Search letters or gestures..." autocomplete="off">
+          <button class="sl-search-clear" id="sl-search-clear" style="display:none;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.8rem;">&times;</button>
+        </div>
+        <div class="sl-categories" id="sl-categories" style="margin-bottom:6px;"></div>
+        <div class="sl-stats" id="sl-stats" style="margin-bottom:6px;">
+          <div class="sl-stat"><span class="sl-stat-val" id="sl-stat-total">26</span><span class="sl-stat-lbl">Letters</span></div>
+          <div class="sl-stat"><span class="sl-stat-val" id="sl-stat-learned">0</span><span class="sl-stat-lbl">Learned</span></div>
+          <div class="sl-stat"><span class="sl-stat-val" id="sl-stat-favs">0</span><span class="sl-stat-lbl">Favorites</span></div>
+        </div>
+        <div class="sl-grid" id="sl-grid"></div>
+        <div class="sl-learning" id="sl-learning">
+          <button class="sl-learn-btn" id="sl-learn-btn"><i class="fas fa-graduation-cap"></i> Quick Learning Mode</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Timeline + Reference -->
+      <div class="detection-sidebar">
+        <div class="history-panel glass card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3 style="font-size:0.9rem;display:flex;align-items:center;gap:6px;"><i class="fas fa-clock" style="color:var(--accent-primary);"></i> Timeline</h3>
+            <div style="display:flex;gap:4px;">
+              <button class="icon-btn" style="width:28px;height:28px;font-size:0.7rem;" title="Export TXT" id="export-txt"><i class="fas fa-file-alt"></i></button>
+              <button class="icon-btn" style="width:28px;height:28px;font-size:0.7rem;" title="Export PDF" id="export-pdf"><i class="fas fa-file-pdf"></i></button>
+            </div>
+          </div>
+          <div class="history-list" id="history-list">
+            <div class="history-empty" id="history-empty">
+              <i class="fas fa-wave-square" style="font-size:1.2rem;color:var(--text-muted);"></i>
+              <span style="font-size:0.85rem;color:var(--text-muted);">No detections yet</span>
+            </div>
+          </div>
+          <div class="sl-recent" id="sl-recent" style="display:none;">
+            <div class="sl-recent-header"><i class="fas fa-history"></i> Recently Detected</div>
+            <div class="sl-recent-list" id="sl-recent-list"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="notification-bar" id="notification-bar" style="display:none;">
+      <span id="notif-text"></span>
+      <button id="notif-close" style="background:none;border:none;color:inherit;cursor:pointer;font-size:1rem;">&times;</button>
+    </div>
+
+    <!-- ─── ASL ALPHABET REFERENCE GUIDE ─── -->
+    <section class="asl-section" id="asl-reference">
+      <h2 class="asl-section-title">ASL Alphabet Learning Guide</h2>
+      <p class="asl-section-sub">Interactive reference for all 26 American Sign Language letters</p>
+
+      <div class="asl-poster-wrap glass-strong">
+        <img src="reference/asl-reference.png" alt="ASL Alphabet Reference Chart" loading="lazy">
+      </div>
+
+      <div class="asl-controls">
+        <div class="asl-search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="asl-search" placeholder="Search letter (A-Z)..." maxlength="1" autocomplete="off">
+        </div>
+        <div class="asl-filters" id="asl-filters">
+          <button class="asl-filter-btn active" data-filter="all">Show All</button>
+          <button class="asl-filter-btn" data-filter="a-f">A-F</button>
+          <button class="asl-filter-btn" data-filter="g-l">G-L</button>
+          <button class="asl-filter-btn" data-filter="m-r">M-R</button>
+          <button class="asl-filter-btn" data-filter="s-z">S-Z</button>
+        </div>
+        <div class="asl-actions">
+          <button class="asl-action-btn" id="asl-random"><i class="fas fa-shuffle"></i> Random</button>
+          <button class="asl-action-btn" id="asl-quiz-btn"><i class="fas fa-question-circle"></i> Quiz</button>
+        </div>
+      </div>
+
+      <div class="asl-stats">
+        <div class="asl-stat"><span class="asl-stat-val">26</span><span class="asl-stat-lbl">Letters</span></div>
+        <div class="asl-stat"><span class="asl-stat-val" id="asl-stat-favs">0</span><span class="asl-stat-lbl">Favorites</span></div>
+        <div class="asl-stat"><span class="asl-stat-val" id="asl-stat-learned">0</span><span class="asl-stat-lbl">Learned</span></div>
+      </div>
+
+      <div class="asl-recent" id="asl-recent"></div>
+      <div class="asl-grid" id="asl-grid"></div>
+    </section>
+
+    <!-- ─── KERAS GESTURE REFERENCE GUIDE ─── -->
+    <section class="asl-section" id="keras-reference">
+      <h2 class="asl-section-title">Gesture Reference Library</h2>
+      <p class="asl-section-sub">Reference chart for numbers, days, and common sign language gestures</p>
+      <div class="asl-poster-wrap glass-strong">
+        <img src="reference/keras-reference.png" alt="Gesture Reference Chart" loading="lazy">
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ASL Reference Modal -->
+<div class="asl-modal" id="asl-modal">
+  <div class="asl-modal-content glass-strong">
+    <button class="asl-modal-close"><i class="fas fa-times"></i></button>
+    <div class="asl-modal-visual"><span class="asl-modal-letter-badge">A</span></div>
+    <div class="asl-modal-body">
+      <div class="asl-modal-letter-name">Letter A</div>
+      <p class="asl-modal-desc">Description</p>
+      <div class="asl-modal-section">
+        <h4><i class="fas fa-hand-pointer"></i> Finger Positioning</h4>
+        <p id="modal-fingers"></p>
+      </div>
+      <div class="asl-modal-section">
+        <h4><i class="fas fa-lightbulb"></i> Learning Tip</h4>
+        <p id="modal-tip"></p>
+      </div>
+      <div class="asl-modal-actions">
+        <button class="asl-modal-btn" id="modal-fav-btn"><i class="far fa-star"></i> Favorite</button>
+        <button class="asl-modal-btn primary" id="modal-practice-btn"><i class="fas fa-redo"></i> Practice</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASL Quiz Overlay -->
+<div class="asl-quiz-overlay" id="asl-quiz">
+  <div class="asl-quiz-card glass-strong"></div>
+</div>
+
+<div id="gesture-modal" class="sl-modal">
+  <div class="sl-modal-content glass">
+    <button class="sl-modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+    <div class="sl-modal-body">
+      <div class="sl-modal-preview" id="modal-preview-area"></div>
+      <div class="sl-modal-info">
+        <h2 id="modal-title">Letter A</h2>
+        <p class="sl-modal-desc" id="modal-desc"></p>
+        <div class="sl-modal-section">
+          <h4><i class="fas fa-hand-pointer"></i> Finger Positioning</h4>
+          <p id="modal-fingers"></p>
+        </div>
+        <div class="sl-modal-section">
+          <h4><i class="fas fa-lightbulb"></i> Learning Tip</h4>
+          <p id="modal-tip">Practice making this shape slowly, then try to hold it steady. Mirror the gesture with your non-dominant hand for comparison.</p>
+        </div>
+        <button class="sl-modal-practice" id="modal-practice"><i class="fas fa-redo"></i> Practice This Gesture</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast glass"></div>
+<div class="toast-container" id="toast-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="js/sign-data.js"></script>
+<script src="js/detection.js"></script>
+<script src="js/asl-reference.js"></script>
+<script>
+/* ─── Notification Center ─── */
+const notifQueue = [];
+const notifBell = document.getElementById('notif-bell');
+const notifDropdown = document.getElementById('notif-dropdown');
+const notifList = document.getElementById('notif-list');
+const notifDot = notifBell.querySelector('.badge-dot');
+let notifOpen = false;
+function addNotification(icon, text) {
+    notifQueue.unshift({ icon, text, time: new Date().toLocaleTimeString() });
+    if (notifQueue.length > 20) notifQueue.pop();
+    renderNotifications();
+    notifDot.classList.add('show');
+}
+function renderNotifications() {
+    if (!notifQueue.length) { notifList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.82rem;">No notifications</div>'; return; }
+    notifList.innerHTML = notifQueue.map(n => `
+        <div class="notif-item unread">
+            <div class="notif-icon">${n.icon}</div>
+            <div class="notif-body"><p>${n.text}</p><div class="notif-time">${n.time}</div></div>
+        </div>
+    `).join('');
+}
+renderNotifications();
+notifBell.addEventListener('click', (e) => { e.stopPropagation(); notifOpen = !notifOpen; notifDropdown.classList.toggle('open', notifOpen); if (notifOpen) notifDot.classList.remove('show'); });
+document.addEventListener('click', () => { notifDropdown.classList.remove('open'); notifOpen = false; });
+document.getElementById('notif-clear').addEventListener('click', (e) => { e.stopPropagation(); notifQueue.length = 0; renderNotifications(); notifDot.classList.remove('show'); });
+/* ─── Page Transition ─── */
+document.querySelectorAll('a:not([href^="#"]):not([href*="javascript"])').forEach(a => {
+    a.addEventListener('click', function(e) {
+        if (this.hostname === window.location.hostname && this.pathname !== window.location.pathname) {
+            e.preventDefault();
+            const t = document.getElementById('page-transition');
+            t.classList.add('active');
+            setTimeout(() => { window.location.href = this.href; }, 250);
+        }
+    });
+});
+/* ─── Session Timer ─── */
+let sessionStart = Date.now();
+let sessionFrameCount = 0;
+let sessionDetCount = 0;
+setInterval(() => {
+    const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    document.getElementById('session-timer').textContent = m + ':' + s;
+}, 1000);
+/* Hook into detection.js frame counting if available */
+const origFetch = window.fetch;
+let frameHook = setInterval(() => {
+    const f = document.getElementById('session-frames');
+    if (f) f.textContent = sessionFrameCount++;
+}, 1000);
+</script>
+</body>
+</html>

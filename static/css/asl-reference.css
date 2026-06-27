@@ -1,0 +1,677 @@
+/* ─── ASL Alphabet Reference Guide ─── */
+.asl-section {
+  padding: var(--space-10) 0;
+  position: relative;
+}
+.asl-section-title {
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.asl-section-sub {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-8);
+}
+
+/* ─── Reference Poster ─── */
+.asl-poster-wrap {
+  max-width: 640px;
+  margin: 0 auto var(--space-8);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), var(--glow-primary);
+  transition: transform 0.3s ease;
+}
+.asl-poster-wrap:hover {
+  transform: scale(1.01);
+  box-shadow: var(--shadow-xl), var(--shadow-glow-strong);
+}
+.asl-poster-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ─── Controls ─── */
+.asl-controls {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+  justify-content: center;
+}
+.asl-search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+  min-width: 200px;
+}
+.asl-search-wrap i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+.asl-search-wrap input {
+  width: 100%;
+  padding: 10px 14px 10px 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  transition: var(--transition);
+}
+.asl-search-wrap input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(0,242,255,0.1);
+}
+.asl-search-wrap input::placeholder {
+  color: var(--text-muted);
+}
+body.light-mode .asl-search-wrap input {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* ─── Filter Buttons ─── */
+.asl-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.asl-filter-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.asl-filter-btn:hover {
+  border-color: rgba(0,242,255,0.2);
+  color: var(--text-main);
+}
+.asl-filter-btn.active {
+  border-color: var(--accent-primary);
+  background: rgba(0,242,255,0.08);
+  color: var(--accent-primary);
+}
+body.light-mode .asl-filter-btn {
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* ─── Action Buttons ─── */
+.asl-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.asl-action-btn {
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.asl-action-btn:hover {
+  border-color: rgba(0,242,255,0.2);
+  color: var(--text-main);
+}
+.asl-action-btn.active {
+  background: rgba(245,158,11,0.1);
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+.asl-action-btn i { font-size: 0.75rem; }
+
+/* ─── Stats Bar ─── */
+.asl-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+.asl-stat {
+  text-align: center;
+}
+.asl-stat-val {
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: block;
+  color: var(--accent-primary);
+}
+.asl-stat-lbl {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Grid ─── */
+.asl-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-3);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media(max-width: 1024px) {
+  .asl-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media(max-width: 640px) {
+  .asl-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── Card ─── */
+.asl-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: aslFadeIn 0.4s ease both;
+  display: flex;
+  flex-direction: column;
+}
+.asl-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-glow), 0 12px 40px rgba(0,0,0,0.15);
+  border-color: rgba(0,242,255,0.2);
+}
+.asl-card:active {
+  transform: translateY(-2px) scale(1.01);
+}
+.asl-card.favorited {
+  border-color: #f59e0b;
+}
+.asl-card.learned {
+  border-color: #10b981;
+}
+.asl-card.matched {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(0,242,255,0.2), var(--shadow-glow);
+}
+
+/* Card Visual */
+.asl-card-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(0,242,255,0.05), rgba(112,0,255,0.05));
+  flex-shrink: 0;
+}
+.asl-card-visual svg {
+  width: 72px;
+  height: 72px;
+}
+.asl-card-img {
+  width: 72px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.asl-card-letter-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #fff;
+  z-index: 2;
+}
+.asl-card-fav {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: var(--transition);
+  z-index: 2;
+}
+.asl-card-fav:hover { color: #f59e0b; background: rgba(245,158,11,0.15); }
+.asl-card.favorited .asl-card-fav { color: #f59e0b; }
+
+/* Card Body */
+.asl-card-body {
+  padding: 10px 12px 14px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.asl-card-letter {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+.asl-card-name {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.asl-card-progress {
+  margin-top: auto;
+  padding-top: 6px;
+}
+.asl-card-progress-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  transition: var(--transition);
+}
+.asl-card-progress-dot.learned { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.4); }
+.asl-card-progress-dot.practicing { background: var(--accent-primary); box-shadow: 0 0 6px rgba(0,242,255,0.4); }
+.asl-card-progress-dot.new { background: var(--text-muted); }
+
+/* ─── Animations ─── */
+@keyframes aslFadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.asl-card:nth-child(1) { animation-delay: 0.02s; }
+.asl-card:nth-child(2) { animation-delay: 0.04s; }
+.asl-card:nth-child(3) { animation-delay: 0.06s; }
+.asl-card:nth-child(4) { animation-delay: 0.08s; }
+.asl-card:nth-child(5) { animation-delay: 0.10s; }
+.asl-card:nth-child(6) { animation-delay: 0.12s; }
+.asl-card:nth-child(7) { animation-delay: 0.14s; }
+.asl-card:nth-child(8) { animation-delay: 0.16s; }
+.asl-card:nth-child(9) { animation-delay: 0.18s; }
+.asl-card:nth-child(10) { animation-delay: 0.20s; }
+.asl-card:nth-child(11) { animation-delay: 0.22s; }
+.asl-card:nth-child(12) { animation-delay: 0.24s; }
+.asl-card:nth-child(13) { animation-delay: 0.26s; }
+.asl-card:nth-child(14) { animation-delay: 0.28s; }
+.asl-card:nth-child(15) { animation-delay: 0.30s; }
+.asl-card:nth-child(16) { animation-delay: 0.32s; }
+.asl-card:nth-child(17) { animation-delay: 0.34s; }
+.asl-card:nth-child(18) { animation-delay: 0.36s; }
+.asl-card:nth-child(19) { animation-delay: 0.38s; }
+.asl-card:nth-child(20) { animation-delay: 0.40s; }
+.asl-card:nth-child(21) { animation-delay: 0.42s; }
+.asl-card:nth-child(22) { animation-delay: 0.44s; }
+.asl-card:nth-child(23) { animation-delay: 0.46s; }
+.asl-card:nth-child(24) { animation-delay: 0.48s; }
+.asl-card:nth-child(25) { animation-delay: 0.50s; }
+.asl-card:nth-child(26) { animation-delay: 0.52s; }
+
+/* ─── Modal ─── */
+.asl-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  padding: var(--space-4);
+}
+body.light-mode .asl-modal {
+  background: rgba(255,255,255,0.7);
+}
+.asl-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+.asl-modal-content {
+  width: 100%;
+  max-width: 520px;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--glass-border);
+  background: var(--bg-surface);
+  overflow: hidden;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+.asl-modal.open .asl-modal-content {
+  transform: scale(1) translateY(0);
+}
+.asl-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  z-index: 3;
+}
+.asl-modal-close:hover { background: rgba(0,0,0,0.5); }
+.asl-modal-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 24px;
+  background: linear-gradient(135deg, rgba(0,242,255,0.08), rgba(112,0,255,0.08));
+  position: relative;
+}
+.asl-modal-visual svg {
+  width: 140px;
+  height: 140px;
+}
+.asl-modal-img {
+  width: auto;
+  height: 160px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.asl-modal-letter-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+}
+.asl-modal-body {
+  padding: 24px 28px 28px;
+}
+.asl-modal-letter-name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+.asl-modal-desc {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: var(--space-5);
+}
+.asl-modal-section {
+  margin-bottom: var(--space-4);
+}
+.asl-modal-section h4 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.asl-modal-section h4 i {
+  color: var(--accent-primary);
+}
+.asl-modal-section p {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+.asl-modal-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: var(--space-5);
+}
+.asl-modal-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: none;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.asl-modal-btn:hover {
+  border-color: var(--accent-primary);
+  background: rgba(0,242,255,0.06);
+}
+.asl-modal-btn.primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: #000;
+  border: none;
+}
+.asl-modal-btn.primary:hover {
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+/* ─── Quiz Mode ─── */
+.asl-quiz-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  padding: var(--space-4);
+}
+body.light-mode .asl-quiz-overlay {
+  background: rgba(255,255,255,0.8);
+}
+.asl-quiz-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.asl-quiz-card {
+  max-width: 480px;
+  width: 100%;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--glass-border);
+  background: var(--bg-surface);
+  overflow: hidden;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
+  padding: 36px 32px 32px;
+}
+.asl-quiz-overlay.open .asl-quiz-card {
+  transform: scale(1) translateY(0);
+}
+.asl-quiz-letter {
+  font-size: 5rem;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+.asl-quiz-hint {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: var(--space-6);
+}
+.asl-quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: var(--space-5);
+}
+.asl-quiz-opt {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--glass-border);
+  background: none;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.asl-quiz-opt:hover {
+  border-color: var(--accent-primary);
+  background: rgba(0,242,255,0.04);
+}
+.asl-quiz-opt.correct {
+  border-color: #10b981;
+  background: rgba(16,185,129,0.1);
+  color: #10b981;
+}
+.asl-quiz-opt.wrong {
+  border-color: #ef4444;
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+}
+.asl-quiz-opt:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.asl-quiz-score {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: var(--space-4);
+}
+.asl-quiz-score strong {
+  color: var(--accent-primary);
+}
+.asl-quiz-close {
+  padding: 8px 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.asl-quiz-close:hover {
+  border-color: var(--accent-primary);
+  color: var(--text-main);
+}
+
+/* ─── Recently Viewed ─── */
+.asl-recent {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+  min-height: 28px;
+}
+.asl-recent-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.asl-recent-chip {
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(0,242,255,0.08);
+  color: var(--accent-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.asl-recent-chip:hover {
+  background: rgba(0,242,255,0.15);
+}
+
+/* ─── Responsive ─── */
+@media(max-width: 768px) {
+  .asl-section-title { font-size: 1.5rem; }
+  .asl-controls { flex-direction: column; align-items: stretch; }
+  .asl-search-wrap { max-width: 100%; }
+  .asl-filters { justify-content: center; }
+  .asl-actions { justify-content: center; }
+  .asl-modal-body { padding: 20px; }
+  .asl-quiz-card { padding: 24px 20px; }
+  .asl-quiz-letter { font-size: 3.5rem; }
+  .asl-quiz-options { grid-template-columns: 1fr 1fr; gap: 8px; }
+}
+@media(max-width: 480px) {
+  .asl-card-visual { height: 80px; }
+  .asl-card-visual svg { width: 56px; height: 56px; }
+  .asl-card-img { width: 56px; }
+  .asl-modal-visual svg { width: 100px; height: 100px; }
+  .asl-modal-img { height: 120px; }
+  .asl-section { padding: var(--space-6) 0; }
+}

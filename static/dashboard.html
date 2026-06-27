@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTSL AI | Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="page-transition" id="page-transition"></div>
+    <div class="app-container">
+        <aside class="sidebar glass">
+            <div class="logo">RTSL AI</div>
+            <nav>
+                <a href="dashboard.html" class="nav-item active"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <a href="detection.html" class="nav-item"><i class="fas fa-camera"></i><span>Detection</span></a>
+                <a href="analytics.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+                <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+            </nav>
+            <div class="nav-divider"></div>
+            <a href="#" id="logout-btn" class="nav-item logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </aside>
+
+        <main class="main-content">
+            <div class="dash-hero">
+                <div class="dash-hero-inner">
+                    <div class="dash-hero-left">
+                        <div class="avatar avatar-lg" id="hero-avatar">U</div>
+                        <div class="dash-hero-greeting">
+                            <h1>Welcome back, <span id="user-display" style="color:var(--accent-primary);">User</span></h1>
+                            <p><span id="hero-date"></span> &middot; <span id="hero-detections-today">0</span> detections today</p>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                        <div class="dash-hero-badge">
+                            <span class="pulse-dot"></span>
+                            <span id="sys-status-text">System Online</span>
+                        </div>
+                        <div class="notif-bell" id="notif-bell"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+                        <div class="notif-dropdown glass-premium" id="notif-dropdown">
+                            <div class="notif-header"><span>Notifications</span><button id="notif-clear">Clear all</button></div>
+                            <div id="notif-list"></div>
+                        </div>
+                        <button id="theme-toggle" class="btn btn-secondary btn-icon"><i class="fas fa-moon"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card animate-fade-in-1">
+                    <div class="stat-card-top">
+                        <div class="stat-card-icon" style="background:rgba(0,242,255,0.08);color:var(--accent-primary);"><i class="fas fa-eye"></i></div>
+                        <span class="stat-card-change up"><i class="fas fa-arrow-up"></i> <span id="detection-trend">0</span></span>
+                    </div>
+                    <div class="stat-card-value" id="total-detections">0</div>
+                    <div class="stat-card-label">Total Detections</div>
+                </div>
+                <div class="stat-card animate-fade-in-2">
+                    <div class="stat-card-top">
+                        <div class="stat-card-icon" style="background:rgba(192,132,252,0.08);color:#c084fc;"><i class="fas fa-trophy"></i></div>
+                        <span class="stat-card-change up" style="color:#c084fc;background:rgba(192,132,252,0.08);"><i class="fas fa-chart-bar"></i> Top</span>
+                    </div>
+                    <div class="stat-card-value" id="most-detected">-</div>
+                    <div class="stat-card-label">Most Detected Gesture</div>
+                </div>
+                <div class="stat-card animate-fade-in-3">
+                    <div class="stat-card-top">
+                        <div class="stat-card-icon" style="background:rgba(34,197,94,0.08);color:#22c55e;"><i class="fas fa-microchip"></i></div>
+                        <span class="stat-card-change up" style="color:#22c55e;background:rgba(34,197,94,0.08);" id="active-model-type"><i class="fas fa-check-circle"></i> Active</span>
+                    </div>
+                    <div class="stat-card-value" id="active-model-name">-</div>
+                    <div class="stat-card-label">Active Model</div>
+                </div>
+                <div class="stat-card animate-fade-in-4">
+                    <div class="stat-card-top">
+                        <div class="stat-card-icon" style="background:rgba(245,158,11,0.08);color:#f59e0b;"><i class="fas fa-bullseye"></i></div>
+                        <span class="stat-card-change up" style="color:#f59e0b;background:rgba(245,158,11,0.08);"><i class="fas fa-percent"></i> Avg</span>
+                    </div>
+                    <div class="stat-card-value" id="avg-confidence">0%</div>
+                    <div class="stat-card-label">Average Confidence</div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-5);margin-top:var(--space-5);">
+                <div>
+                    <div class="card glass card-premium">
+                        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3);">
+                            <h3><i class="fas fa-chart-line" style="color:var(--accent-primary);margin-right:8px;"></i>Detection Trend</h3>
+                            <div class="tabs" id="trend-tabs">
+                                <button class="tab active" data-range="7">7D</button>
+                                <button class="tab" data-range="30">30D</button>
+                                <button class="tab" data-range="90">90D</button>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="height:220px;"><canvas id="chart-trend"></canvas></div>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-4);">
+                        <div class="card glass">
+                            <div class="card-header"><h3><i class="fas fa-microchip" style="color:var(--accent-primary);margin-right:8px;"></i>Model Hub</h3></div>
+                            <div class="search-bar" style="margin-bottom:12px;">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="model-search" placeholder="Search models...">
+                            </div>
+                            <div id="model-hub" style="display:flex;flex-direction:column;gap:8px;"></div>
+                        </div>
+                        <div>
+                            <div class="card glass card-premium ai-insights" style="padding:var(--space-5);">
+                                <div class="ai-insights-header">
+                                    <span class="pulse-dot"></span>
+                                    AI Insights
+                                </div>
+                                <div id="ai-insights-list">
+                                    <div class="insight-item"><span class="insight-icon"><i class="fas fa-spinner fa-spin"></i></span> Analyzing your detection patterns...</div>
+                                </div>
+                            </div>
+                            <div class="card glass" style="margin-top:var(--space-4);">
+                                <div class="card-header"><h3><i class="fas fa-bolt" style="color:#f59e0b;margin-right:8px;"></i>Quick Actions</h3></div>
+                                <div class="quick-actions">
+                                    <a href="detection.html" class="quick-action">
+                                        <div class="quick-action-icon" style="background:rgba(0,242,255,0.08);color:var(--accent-primary);"><i class="fas fa-play"></i></div>
+                                        <span>Start Detection</span>
+                                    </a>
+                                    <a href="analytics.html" class="quick-action">
+                                        <div class="quick-action-icon" style="background:rgba(192,132,252,0.08);color:#c084fc;"><i class="fas fa-chart-pie"></i></div>
+                                        <span>View Analytics</span>
+                                    </a>
+                                    <div class="quick-action" id="screenshot-dash">
+                                        <div class="quick-action-icon" style="background:rgba(34,197,94,0.08);color:#22c55e;"><i class="fas fa-camera"></i></div>
+                                        <span>Screenshot</span>
+                                    </div>
+                                    <div class="quick-action" id="export-csv-dash">
+                                        <div class="quick-action-icon" style="background:rgba(245,158,11,0.08);color:#f59e0b;"><i class="fas fa-file-export"></i></div>
+                                        <span>Export Data</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card glass">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history" style="color:var(--accent-primary);margin-right:8px;"></i>Recent Activity</h3>
+                        </div>
+                        <div class="activity-feed" id="activity-feed">
+                            <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:0.9rem;">No recent activity</div>
+                        </div>
+                    </div>
+
+                    <div class="card glass" style="margin-top:var(--space-4);">
+                        <div class="card-header"><h3><i class="fas fa-heartbeat" style="color:#22c55e;margin-right:8px;"></i>System Health</h3></div>
+                        <div class="model-status" style="margin-bottom:8px;">
+                            <div class="model-status-left">
+                                <div class="model-status-icon yolo"><i class="fas fa-server"></i></div>
+                                <div class="model-status-info"><h4>API Server</h4><p>Online</p></div>
+                            </div>
+                            <span class="model-status-indicator active"></span>
+                        </div>
+                        <div class="model-status" style="margin-bottom:8px;">
+                            <div class="model-status-left">
+                                <div class="model-status-icon yolo"><i class="fas fa-database"></i></div>
+                                <div class="model-status-info"><h4>Database</h4><p>SQLite &mdash; Connected</p></div>
+                            </div>
+                            <span class="model-status-indicator active"></span>
+                        </div>
+                        <div class="model-status" style="margin-bottom:8px;">
+                            <div class="model-status-left">
+                                <div class="model-status-icon yolo"><i class="fas fa-video"></i></div>
+                                <div class="model-status-info"><h4>Webcam</h4><p>Ready</p></div>
+                            </div>
+                            <span class="model-status-indicator active"></span>
+                        </div>
+                        <div class="model-status">
+                            <div class="model-status-left">
+                                <div class="model-status-icon keras"><i class="fas fa-microchip"></i></div>
+                                <div class="model-status-info"><h4>GPU Acceleration</h4><p>CPU Fallback</p></div>
+                            </div>
+                            <span class="model-status-indicator inactive"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+<script>
+let modelsCache = [];
+let trendChart = null;
+let statsInterval = null;
+
+const toastContainer = document.getElementById('toast-container');
+function showToast(message, type = 'success') {
+    const t = document.createElement('div');
+    const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle' };
+    t.className = 'toast toast-' + type;
+    t.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type] || icons.info}"></i></div><div>${message}</div>`;
+    toastContainer.appendChild(t);
+    setTimeout(() => { t.classList.add('toast-leave'); setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+/* ─── Notification Center ─── */
+const notifQueue = [];
+const notifBell = document.getElementById('notif-bell');
+const notifDropdown = document.getElementById('notif-dropdown');
+const notifList = document.getElementById('notif-list');
+const notifDot = notifBell.querySelector('.badge-dot');
+let notifOpen = false;
+
+function addNotification(icon, text) {
+    notifQueue.unshift({ icon, text, time: new Date().toLocaleTimeString() });
+    if (notifQueue.length > 20) notifQueue.pop();
+    renderNotifications();
+    notifDot.classList.add('show');
+}
+
+function renderNotifications() {
+    if (!notifQueue.length) {
+        notifList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.82rem;">No notifications</div>';
+        return;
+    }
+    notifList.innerHTML = notifQueue.map(n => `
+        <div class="notif-item unread">
+            <div class="notif-icon">${n.icon}</div>
+            <div class="notif-body"><p>${n.text}</p><div class="notif-time">${n.time}</div></div>
+        </div>
+    `).join('');
+}
+renderNotifications();
+
+notifBell.addEventListener('click', (e) => {
+    e.stopPropagation();
+    notifOpen = !notifOpen;
+    notifDropdown.classList.toggle('open', notifOpen);
+    if (notifOpen) notifDot.classList.remove('show');
+});
+document.addEventListener('click', () => { notifDropdown.classList.remove('open'); notifOpen = false; });
+document.getElementById('notif-clear').addEventListener('click', (e) => {
+    e.stopPropagation();
+    notifQueue.length = 0;
+    renderNotifications();
+    notifDot.classList.remove('show');
+});
+
+/* ─── Page Transition ─── */
+document.querySelectorAll('a:not([href^="#"]):not([href*="javascript"])').forEach(a => {
+    a.addEventListener('click', function(e) {
+        if (this.hostname === window.location.hostname && this.pathname !== window.location.pathname) {
+            e.preventDefault();
+            const t = document.getElementById('page-transition');
+            t.classList.add('active');
+            setTimeout(() => { window.location.href = this.href; }, 250);
+        }
+    });
+});
+
+/* ─── Chart Helpers ─── */
+function isDark() { return !document.body.classList.contains('light-mode'); }
+function textColor() { return isDark() ? '#e2e8f0' : '#1e293b'; }
+function gridColor() { return isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; }
+const COLORS = {
+    primary: 'rgba(0,242,255,0.8)', secondary: 'rgba(192,132,252,0.8)',
+    green: 'rgba(34,197,94,0.8)', amber: 'rgba(245,158,11,0.8)'
+};
+function BG(c) { return c.replace('0.8', '0.08'); }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('asl_user'));
+    if (!user) { window.location.href = 'index.html'; return; }
+    document.getElementById('user-display').textContent = user.username;
+
+    // Date
+    const now = new Date();
+    document.getElementById('hero-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+    // Avatar initial
+    const avatar = document.getElementById('hero-avatar');
+    avatar.textContent = user.username.charAt(0).toUpperCase();
+    const cachedAvatar = localStorage.getItem('asl_avatar_' + user.user_id);
+    if (cachedAvatar) { avatar.innerHTML = ''; avatar.style.backgroundImage = `url(${cachedAvatar})`; avatar.style.backgroundSize = 'cover'; avatar.style.backgroundPosition = 'center'; avatar.textContent = ''; }
+
+    const themeToggle = document.getElementById('theme-toggle');
+    if (localStorage.getItem('asl_theme') === 'light') {
+        document.body.classList.add('light-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const l = document.body.classList.contains('light-mode');
+        themeToggle.innerHTML = l ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('asl_theme', l ? 'light' : 'dark');
+        if (trendChart) { trendChart.destroy(); trendChart = null; }
+        loadQuickStats();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith('asl_')) keys.push(k); }
+        keys.forEach(k => localStorage.removeItem(k));
+        window.location.href = 'index.html';
+    });
+
+    // Trend tabs
+    document.querySelectorAll('#trend-tabs .tab').forEach(t => {
+        t.addEventListener('click', () => {
+            document.querySelectorAll('#trend-tabs .tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            loadQuickStats();
+        });
+    });
+
+    loadModels();
+    loadQuickStats();
+    statsInterval = setInterval(loadQuickStats, 5000);
+
+    document.getElementById('model-search').addEventListener('input', filterModels);
+});
+
+async function loadModels() {
+    try {
+        const res = await fetch('/available_models');
+        modelsCache = await res.json();
+        renderModels(modelsCache);
+    } catch (err) { console.error(err); }
+}
+
+function renderModels(models) {
+    const hub = document.getElementById('model-hub');
+    if (!models.length) {
+        hub.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem;">No models found</div>';
+        return;
+    }
+    hub.innerHTML = '';
+    models.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'model-status';
+        card.dataset.type = m.type;
+        card.dataset.name = m.name.toLowerCase();
+        const isYolo = m.type === 'yolo';
+        card.innerHTML = `
+            <div class="model-status-left">
+                <div class="model-status-icon ${isYolo ? 'yolo' : 'keras'}"><i class="fas ${isYolo ? 'fa-brain' : 'fa-layer-group'}"></i></div>
+                <div class="model-status-info"><h4>${m.name}</h4><p>${m.type.toUpperCase()} &middot; ${m.path}</p></div>
+            </div>
+            <span class="model-status-indicator ${models.indexOf(m) === 0 ? 'active' : 'inactive'}"></span>
+        `;
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => switchModel(m));
+        hub.appendChild(card);
+    });
+}
+
+function filterModels() {
+    const q = document.getElementById('model-search').value.toLowerCase();
+    renderModels(modelsCache.filter(m => m.name.toLowerCase().includes(q) || m.type.includes(q)));
+}
+
+async function switchModel(modelInfo) {
+    try {
+        const res = await fetch('/select_model', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(modelInfo)
+        });
+        if (res.ok) {
+            showToast(`Switched to ${modelInfo.name}`, 'success');
+            document.querySelectorAll('.model-status').forEach(c => c.style.borderColor = '');
+            document.querySelectorAll('.model-status').forEach(c => {
+                if (c.dataset.name === modelInfo.name.toLowerCase()) {
+                    c.style.borderColor = 'var(--accent-primary)';
+                    c.querySelector('.model-status-indicator').className = 'model-status-indicator active';
+                } else {
+                    c.querySelector('.model-status-indicator').className = 'model-status-indicator inactive';
+                }
+            });
+            loadQuickStats();
+        } else { showToast('Failed to switch model', 'error'); }
+    } catch (err) { showToast('Error switching model', 'error'); }
+}
+
+async function loadQuickStats() {
+    try {
+        const user = JSON.parse(localStorage.getItem('asl_user') || '{}');
+        const uid = user.user_id || 0;
+        const [anRes, histRes, modRes] = await Promise.all([
+            fetch(`/analytics?user_id=${uid}`),
+            fetch(`/history?user_id=${uid}`),
+            fetch('/available_models')
+        ]);
+        const data = await anRes.json();
+        const history = await histRes.json();
+        const allModels = await modRes.json();
+
+        // Stats
+        document.getElementById('total-detections').textContent = data.total;
+        if (data.labels.length > 0) {
+            const maxIdx = data.data.indexOf(Math.max(...data.data));
+            document.getElementById('most-detected').textContent = data.labels[maxIdx];
+        }
+
+        // Today count
+        const today = new Date().toDateString();
+        const todayCount = history.filter(h => h.timestamp && new Date(h.timestamp).toDateString() === today).length;
+        document.getElementById('hero-detections-today').textContent = todayCount;
+
+        // Avg confidence
+        if (history.length > 0) {
+            const avg = history.reduce((s, h) => s + Number(h.confidence), 0) / history.length * 100;
+            document.getElementById('avg-confidence').textContent = avg.toFixed(1) + '%';
+        }
+
+        // Model
+        const defaultModel = allModels.find(m => m.type === 'yolo' && m.name.includes('best')) || allModels[0];
+        if (defaultModel) {
+            document.getElementById('active-model-name').textContent = defaultModel.name.replace(/\.(pt|keras)$/,'').toUpperCase();
+            document.getElementById('active-model-type').innerHTML = `<i class="fas fa-tag"></i> ${defaultModel.type.toUpperCase()}`;
+        }
+
+        // Trend chart
+        renderTrendChart(history);
+
+        // Activity feed
+        if (history.length > 0) {
+            const feed = document.getElementById('activity-feed');
+            feed.innerHTML = '';
+            history.slice(0, 8).forEach(h => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-dot detection"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">Detected <strong>${h.alphabet}</strong> with ${Math.round(h.confidence * 100)}% confidence (${h.model_type.toUpperCase()})</div>
+                        <div class="activity-time">${h.timestamp}</div>
+                    </div>
+                `;
+                feed.appendChild(item);
+            });
+        }
+
+        // AI Insights
+        generateInsights(history, data);
+
+    } catch (err) { console.log('Stats error:', err); }
+}
+
+function renderTrendChart(history) {
+    const ctx = document.getElementById('chart-trend').getContext('2d');
+    if (trendChart) { trendChart.destroy(); }
+
+    const activeTab = document.querySelector('#trend-tabs .tab.active');
+    const range = parseInt(activeTab ? activeTab.dataset.range : 7);
+
+    let grouped = {};
+    const cut = new Date();
+    cut.setDate(cut.getDate() - range);
+
+    history.filter(h => h.timestamp && new Date(h.timestamp) >= cut).forEach(h => {
+        let key;
+        if (range <= 7) key = new Date(h.timestamp).toLocaleDateString('en', { month: 'short', day: 'numeric' });
+        else key = new Date(h.timestamp).toLocaleDateString('en', { month: 'short', day: 'numeric' });
+        grouped[key] = (grouped[key] || 0) + 1;
+    });
+
+    const labels = Object.keys(grouped);
+    const vals = Object.values(grouped);
+
+    trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Detections',
+                data: vals,
+                borderColor: COLORS.primary,
+                backgroundColor: BG(COLORS.primary),
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: COLORS.primary,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: textColor(), maxTicksLimit: 10, maxRotation: 0 }, grid: { display: false } },
+                y: { beginAtZero: true, ticks: { color: textColor(), stepSize: 1 }, grid: { color: gridColor() } }
+            }
+        }
+    });
+}
+
+function generateInsights(data, analytics) {
+    const list = document.getElementById('ai-insights-list');
+    const insights = [];
+
+    if (analytics.total > 0) {
+        const avg = data.length > 0 ? (data.reduce((s, h) => s + Number(h.confidence), 0) / data.length * 100).toFixed(1) : 0;
+        insights.push({ icon: '<i class="fas fa-chart-line" style="color:var(--accent-primary);"></i>', text: `Average detection confidence is <strong>${avg}%</strong>. ${avg > 80 ? 'Excellent accuracy!' : avg > 60 ? 'Good, keep practicing.' : 'Room for improvement.'}` });
+        if (analytics.labels.length > 0) {
+            const maxIdx = analytics.data.indexOf(Math.max(...analytics.data));
+            insights.push({ icon: '<i class="fas fa-trophy" style="color:#f59e0b;"></i>', text: `Most detected gesture is <strong>${analytics.labels[maxIdx]}</strong> with ${Math.max(...analytics.data)} detections.` });
+        }
+        const models = new Set(data.map(h => h.model_type));
+        insights.push({ icon: '<i class="fas fa-microchip" style="color:#c084fc;"></i>', text: `${models.size} model${models.size > 1 ? 's' : ''} in use. ${models.has('yolo') ? 'YOLO' : ''}${models.has('yolo') && models.has('keras') ? ' + ' : ''}${models.has('keras') ? 'Keras' : ''}` });
+        const recent = data.slice(-5);
+        if (recent.length > 0) {
+            const unique = new Set(recent.map(h => h.alphabet));
+            insights.push({ icon: '<i class="fas fa-lightbulb" style="color:#22c55e;"></i>', text: `Recent variety: <strong>${unique.size}</strong> unique gesture${unique.size > 1 ? 's' : ''} in last 5 detections.` });
+        }
+    } else {
+        insights.push({ icon: '<i class="fas fa-info-circle" style="color:var(--accent-primary);"></i>', text: 'No detection data yet. Start a detection session to see insights here.' });
+    }
+
+    list.innerHTML = insights.map(i => `<div class="insight-item"><span class="insight-icon">${i.icon}</span> ${i.text}</div>`).join('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTSL AI | Profile</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-transition" id="page-transition"></div>
+    <div class="app-container">
+        <aside class="sidebar glass">
+            <div class="logo">RTSL AI</div>
+            <nav>
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+                <a href="detection.html" class="nav-item"><i class="fas fa-camera"></i><span>Detection</span></a>
+                <a href="analytics.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+                <a href="profile.html" class="nav-item active"><i class="fas fa-user"></i><span>Profile</span></a>
+            </nav>
+            <div class="nav-divider"></div>
+            <a href="#" id="logout-btn" class="nav-item logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1>Profile</h1>
+                    <p>Manage your account and preferences</p>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <div class="notif-bell" id="notif-bell"><i class="fas fa-bell"></i><span class="badge-dot"></span></div>
+                    <div class="notif-dropdown glass-premium" id="notif-dropdown">
+                        <div class="notif-header"><span>Notifications</span><button id="notif-clear">Clear all</button></div>
+                        <div id="notif-list"></div>
+                    </div>
+                    <button id="theme-toggle" class="btn btn-secondary btn-icon"><i class="fas fa-moon"></i></button>
+                </div>
+            </div>
+
+            <div class="profile-header glass">
+                <div class="profile-avatar-wrap">
+                    <div class="avatar avatar-xl avatar-ring" id="avatar-preview">U</div>
+                    <div class="avatar-overlay" id="avatar-btn"><i class="fas fa-camera"></i></div>
+                    <input type="file" id="avatar-input" accept="image/*" style="display:none;">
+                </div>
+                <div class="profile-info">
+                    <h1 id="profile-name">User</h1>
+                    <p id="profile-joined">Joined recently</p>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="ps-detections">0</div>
+                            <div class="profile-stat-label">Detections</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="ps-avg">0%</div>
+                            <div class="profile-stat-label">Avg Conf</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="ps-models">0</div>
+                            <div class="profile-stat-label">Models</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="ps-unique">0</div>
+                            <div class="profile-stat-label">Gestures</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section card-premium" style="margin-top:var(--space-5);">
+                <h3><i class="fas fa-trophy" style="color:var(--accent-primary);margin-right:8px;"></i>Achievements</h3>
+                <div class="settings-desc">Milestones unlocked as you use RTSL AI</div>
+                <div class="achievement-grid" id="achievement-grid">
+                    <div class="achievement-item" data-ach="first"><div class="achievement-icon"><i class="fas fa-play"></i></div><span class="achievement-label">First Detection</span></div>
+                    <div class="achievement-item" data-ach="ten"><div class="achievement-icon"><i class="fas fa-10"></i></div><span class="achievement-label">10 Detections</span></div>
+                    <div class="achievement-item" data-ach="hundred"><div class="achievement-icon"><i class="fas fa-100"></i></div><span class="achievement-label">100 Detections</span></div>
+                    <div class="achievement-item" data-ach="models"><div class="achievement-icon"><i class="fas fa-microchip"></i></div><span class="achievement-label">Both Models</span></div>
+                    <div class="achievement-item" data-ach="variety"><div class="achievement-icon"><i class="fas fa-dice"></i></div><span class="achievement-label">10 Gestures</span></div>
+                    <div class="achievement-item" data-ach="perfect"><div class="achievement-icon"><i class="fas fa-star"></i></div><span class="achievement-label">Perfect Day</span></div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-4);">
+                <div class="settings-section">
+                    <h3><i class="fas fa-user-cog" style="color:var(--accent-primary);margin-right:8px;"></i>Account Details</h3>
+                    <div class="settings-desc">Your personal information</div>
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" id="edit-username" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="edit-email" class="form-input" placeholder="Not set">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Display Name</label>
+                        <input type="text" id="edit-display" class="form-input" placeholder="Same as username">
+                    </div>
+                    <button id="save-account" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+
+                <div class="settings-section">
+                    <h3><i class="fas fa-shield-alt" style="color:#c084fc;margin-right:8px;"></i>Security</h3>
+                    <div class="settings-desc">Change your password</div>
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" id="cur-pw" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" id="new-pw" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" id="confirm-pw" class="form-input">
+                    </div>
+                    <button id="save-pw" class="btn btn-primary"><i class="fas fa-lock"></i> Update Password</button>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-top:var(--space-4);">
+                <div class="settings-section">
+                    <h3><i class="fas fa-palette" style="color:#f59e0b;margin-right:8px;"></i>Theme Preferences</h3>
+                    <div class="settings-desc">Choose your preferred appearance</div>
+                    <div class="setting-row">
+                        <div><div class="setting-label">Dark Mode</div><div class="setting-desc">Use dark color scheme</div></div>
+                        <label class="toggle"><input type="checkbox" id="theme-switch" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><div class="setting-label">Auto</div><div class="setting-desc">Follow system preference</div></div>
+                        <label class="toggle"><input type="checkbox" id="theme-auto"><span class="toggle-slider"></span></label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3><i class="fas fa-download" style="color:#22c55e;margin-right:8px;"></i>Data Export</h3>
+                    <div class="settings-desc">Download your detection history</div>
+                    <div class="export-buttons">
+                        <button class="btn-export" id="export-csv-p"><i class="fas fa-file-csv" style="color:#22c55e;"></i> CSV</button>
+                        <button class="btn-export" id="export-json-p"><i class="fas fa-file-code" style="color:#f59e0b;"></i> JSON</button>
+                    </div>
+                    <div style="margin-top:var(--space-4);padding:var(--space-3);border-radius:var(--radius-md);background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);">
+                        <div style="font-size:0.8rem;color:var(--text-dim);">Total detections exported: <strong id="export-count">0</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section" style="margin-top:var(--space-4);">
+                <h3><i class="fas fa-history" style="color:var(--accent-primary);margin-right:8px;"></i>Recent Activity</h3>
+                <div class="settings-desc">Your latest detection events</div>
+                <div id="profile-activity-feed">
+                    <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem;">No recent activity</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+<script>
+const toastContainer = document.getElementById('toast-container');
+function showToast(msg, type='success') {
+    const t = document.createElement('div');
+    const icons = {success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle',warning:'fa-exclamation-triangle'};
+    t.className = 'toast toast-' + type;
+    t.innerHTML = `<div class="toast-icon"><i class="fas ${icons[type]||icons.info}"></i></div><div>${msg}</div>`;
+    toastContainer.appendChild(t);
+    setTimeout(() => { t.classList.add('toast-leave'); setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+/* ─── Notification Center ─── */
+const notifQueue = [];
+const notifBell = document.getElementById('notif-bell');
+const notifDropdown = document.getElementById('notif-dropdown');
+const notifList = document.getElementById('notif-list');
+const notifDot = notifBell.querySelector('.badge-dot');
+let notifOpen = false;
+
+function addNotification(icon, text) {
+    notifQueue.unshift({ icon, text, time: new Date().toLocaleTimeString() });
+    if (notifQueue.length > 20) notifQueue.pop();
+    renderNotifications();
+    notifDot.classList.add('show');
+}
+function renderNotifications() {
+    if (!notifQueue.length) { notifList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.82rem;">No notifications</div>'; return; }
+    notifList.innerHTML = notifQueue.map(n => `
+        <div class="notif-item unread">
+            <div class="notif-icon">${n.icon}</div>
+            <div class="notif-body"><p>${n.text}</p><div class="notif-time">${n.time}</div></div>
+        </div>
+    `).join('');
+}
+renderNotifications();
+notifBell.addEventListener('click', (e) => { e.stopPropagation(); notifOpen = !notifOpen; notifDropdown.classList.toggle('open', notifOpen); if (notifOpen) notifDot.classList.remove('show'); });
+document.addEventListener('click', () => { notifDropdown.classList.remove('open'); notifOpen = false; });
+document.getElementById('notif-clear').addEventListener('click', (e) => { e.stopPropagation(); notifQueue.length = 0; renderNotifications(); notifDot.classList.remove('show'); });
+
+/* ─── Page Transition ─── */
+document.querySelectorAll('a:not([href^="#"]):not([href*="javascript"])').forEach(a => {
+    a.addEventListener('click', function(e) {
+        if (this.hostname === window.location.hostname && this.pathname !== window.location.pathname) {
+            e.preventDefault();
+            const t = document.getElementById('page-transition');
+            t.classList.add('active');
+            setTimeout(() => { window.location.href = this.href; }, 250);
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('asl_user'));
+    if (!user) { window.location.href = 'index.html'; return; }
+
+    document.getElementById('profile-name').textContent = user.username;
+    document.getElementById('edit-username').value = user.username;
+
+    // Avatar initial
+    const avatar = document.getElementById('avatar-preview');
+    avatar.textContent = user.username.charAt(0).toUpperCase();
+    const avatarKey = 'asl_avatar_' + user.user_id;
+    const cachedAvatar = localStorage.getItem(avatarKey);
+    if (cachedAvatar) { avatar.innerHTML = ''; avatar.style.backgroundImage = `url(${cachedAvatar})`; avatar.style.backgroundSize = 'cover'; avatar.style.backgroundPosition = 'center'; avatar.textContent = ''; }
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeSwitch = document.getElementById('theme-switch');
+    if (localStorage.getItem('asl_theme') === 'light') {
+        document.body.classList.add('light-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        themeSwitch.checked = false;
+    }
+    themeToggle.addEventListener('click', toggleTheme);
+    themeSwitch.addEventListener('change', () => { toggleTheme(); });
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const l = document.body.classList.contains('light-mode');
+        themeToggle.innerHTML = l ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        themeSwitch.checked = !l;
+        localStorage.setItem('asl_theme', l ? 'light' : 'dark');
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith('asl_')) keys.push(k); }
+        keys.forEach(k => localStorage.removeItem(k));
+        window.location.href = 'index.html';
+    });
+
+    // Avatar upload
+    async function loadAvatar() {
+        try {
+            const res = await fetch(`/profile?username=${user.username}`);
+            const data = await res.json();
+            if (data.profile_photo) {
+                const p = document.getElementById('avatar-preview');
+                p.innerHTML = ''; p.style.backgroundImage = `url(${data.profile_photo})`; p.style.backgroundSize = 'cover'; p.style.backgroundPosition = 'center';
+                localStorage.setItem(avatarKey, data.profile_photo);
+            }
+        } catch (_) {}
+    }
+    loadAvatar();
+
+    document.getElementById('avatar-btn').addEventListener('click', () => document.getElementById('avatar-input').click());
+    document.getElementById('avatar-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                const photoData = ev.target.result;
+                const p = document.getElementById('avatar-preview');
+                p.innerHTML = ''; p.style.backgroundImage = `url(${photoData})`; p.style.backgroundSize = 'cover'; p.style.backgroundPosition = 'center';
+                localStorage.setItem(avatarKey, photoData);
+                try {
+                    await fetch('/update_profile', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: user.username, email: user.email || '', profile_photo: photoData })
+                    });
+                } catch (_) {}
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Save account
+    document.getElementById('save-account').addEventListener('click', async () => {
+        const newUsername = document.getElementById('edit-username').value.trim();
+        const displayName = document.getElementById('edit-display').value.trim() || newUsername;
+        if (!newUsername) { showToast('Username cannot be empty', 'error'); return; }
+        const email = document.getElementById('edit-email').value.trim();
+        user.username = newUsername; user.email = email;
+        document.getElementById('profile-name').textContent = displayName;
+        localStorage.setItem('asl_user', JSON.stringify(user));
+        try {
+            const p = document.getElementById('avatar-preview');
+            const photoData = p.style.backgroundImage ? p.style.backgroundImage.slice(5, -2) : '';
+            await fetch('/update_profile', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: newUsername, email: email, profile_photo: photoData })
+            });
+        } catch (_) {}
+        showToast('Account updated');
+    });
+
+    document.getElementById('save-pw').addEventListener('click', async () => {
+        const curPw = document.getElementById('cur-pw').value;
+        const np = document.getElementById('new-pw').value;
+        const cp = document.getElementById('confirm-pw').value;
+        if (!curPw) { showToast('Enter current password', 'error'); return; }
+        if (np !== cp) { showToast('Passwords do not match', 'error'); return; }
+        if (np.length < 3) { showToast('Password too short', 'error'); return; }
+        try {
+            const r = await fetch('/update_profile', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user.username, email: user.email || '', profile_photo: '', password: curPw, new_password: np })
+            });
+            if (!r.ok) { const d = await r.json(); throw new Error(d.detail || 'Failed to update password'); }
+            showToast('Password updated successfully');
+            document.getElementById('cur-pw').value = '';
+            document.getElementById('new-pw').value = '';
+            document.getElementById('confirm-pw').value = '';
+        } catch (e) {
+            showToast(e.message, 'error');
+        }
+    });
+
+    // Export
+    document.getElementById('export-csv-p').addEventListener('click', exportProfileData);
+    document.getElementById('export-json-p').addEventListener('click', () => exportProfileData('json'));
+
+    loadProfileStats();
+});
+
+async function loadProfileStats() {
+    try {
+        const userData = JSON.parse(localStorage.getItem('asl_user') || '{}');
+        const uid = userData.user_id || 0;
+        const [histRes, anRes] = await Promise.all([
+            fetch(`/history?user_id=${uid}`),
+            fetch(`/analytics?user_id=${uid}`)
+        ]);
+        const history = await histRes.json();
+        const analytics = await anRes.json();
+
+        document.getElementById('ps-detections').textContent = analytics.total;
+        document.getElementById('export-count').textContent = analytics.total;
+
+        if (history.length > 0) {
+            const avg = history.reduce((s, h) => s + Number(h.confidence), 0) / history.length * 100;
+            document.getElementById('ps-avg').textContent = avg.toFixed(1) + '%';
+        }
+        const models = new Set(history.map(h => h.model_type));
+        document.getElementById('ps-models').textContent = models.size;
+        document.getElementById('ps-unique').textContent = new Set(history.map(h => h.alphabet)).size;
+
+        // Activity feed
+        const feed = document.getElementById('profile-activity-feed');
+        feed.innerHTML = '';
+        if (history.length) {
+            history.slice(0, 8).forEach(h => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-dot detection"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">Detected <strong>${h.alphabet}</strong> with ${Math.round(h.confidence * 100)}% confidence (${h.model_type.toUpperCase()})</div>
+                        <div class="activity-time">${h.timestamp}</div>
+                    </div>
+                `;
+                feed.appendChild(item);
+            });
+        } else {
+            feed.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem;">No recent activity</div>';
+        }
+
+        // Joined date
+        const firstTs = history[history.length - 1]?.timestamp;
+        if (firstTs) { const d = new Date(firstTs); if (!isNaN(d)) document.getElementById('profile-joined').textContent = 'Joined ' + d.toLocaleDateString(); }
+
+        // Achievements
+        updateAchievements(history, models);
+    } catch (err) { console.log(err); }
+}
+
+function updateAchievements(history, models) {
+    const total = history.length;
+    const unique = new Set(history.map(h => h.alphabet)).size;
+    document.querySelectorAll('.achievement-item').forEach(el => el.classList.remove('locked'));
+
+    if (total === 0) document.querySelectorAll('.achievement-item').forEach(el => el.classList.add('locked'));
+    if (total < 1) document.querySelector('[data-ach="first"]').classList.add('locked');
+    if (total < 10) document.querySelector('[data-ach="ten"]').classList.add('locked');
+    if (total < 100) document.querySelector('[data-ach="hundred"]').classList.add('locked');
+    if (models.size < 2) document.querySelector('[data-ach="models"]').classList.add('locked');
+    if (unique < 10) document.querySelector('[data-ach="variety"]').classList.add('locked');
+}
+
+function exportProfileData(format = 'csv') {
+    const user = JSON.parse(localStorage.getItem('asl_user') || '{}');
+    const uid = user.user_id || 0;
+    fetch(`/history?user_id=${uid}`)
+        .then(r => r.json())
+        .then(history => {
+            if (!history.length) { showToast('No data to export', 'warning'); return; }
+            let content, mime, ext;
+            if (format === 'csv') {
+                content = 'Alphabet,Confidence,Model Type,Timestamp\n';
+                history.forEach(h => { content += `${h.alphabet},${h.confidence},${h.model_type},${h.timestamp}\n`; });
+                mime = 'text/csv'; ext = 'csv';
+            } else {
+                content = JSON.stringify(history, null, 2);
+                mime = 'application/json'; ext = 'json';
+            }
+            const blob = new Blob([content], { type: mime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'rtsl-data.' + ext; a.click();
+            URL.revokeObjectURL(url);
+            showToast(`${ext.toUpperCase()} exported`);
+        })
+        .catch(() => showToast('Export failed', 'error'));
+}
+</script>
+</body>
+</html>
