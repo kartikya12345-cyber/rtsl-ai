@@ -11,3 +11,5 @@ services:
         value: "1"
       - key: TF_CPP_MIN_LOG_LEVEL
         value: "3"
+      - key: RENDER_PYTHON_VERSION
+        value: "3.11.0"
