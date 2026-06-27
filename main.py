@@ -393,7 +393,7 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
             model_instance = loaded_models.get(current_model_name)
             if model_instance:
                 try:
-                    results = model_instance.predict(image, verbose=False)
+                    results = model_instance(image, verbose=False)
                     if results and len(results) > 0:
                         r = results[0]
                         if r.probs is not None:

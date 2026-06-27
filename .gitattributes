@@ -1,0 +1,16 @@
+*.pt binary
+*.keras binary
+*.task binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.db binary
+*.svg text
+*.html text
+*.css text
+*.js text
+*.py text
+*.txt text
+*.yaml text
+*.md text
+*.json text
