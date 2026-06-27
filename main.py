@@ -158,7 +158,9 @@ KERAS_CLASSES = [
 ]
 
 def load_yolo_model(path):
-    return YOLO(path)
+    model = YOLO(path)
+    print(f"YOLO model loaded: task={model.task}")
+    return model
 
 def load_keras_model(path):
     return keras.models.load_model(path)
@@ -393,7 +395,7 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
             model_instance = loaded_models.get(current_model_name)
             if model_instance:
                 try:
-                    results = model_instance(image, verbose=False)
+                    results = model_instance.predict(image, verbose=False)
                     if results and len(results) > 0:
                         r = results[0]
                         if r.probs is not None:
@@ -407,7 +409,26 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
                             confidence = float(boxes.conf[0].item())
                             alphabet = str(r.names[top_idx])
                 except Exception as e:
-                    print(f"YOLO predict error: {e}")
+                    print(f"YOLO predict error (will retry via file): {e}")
+                    import tempfile
+                    try:
+                        tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+                        cv2.imwrite(tmp.name, image)
+                        tmp.close()
+                        results = model_instance(tmp.name, verbose=False)
+                        os.unlink(tmp.name)
+                        if results and len(results) > 0:
+                            r = results[0]
+                            if r.probs is not None:
+                                class_id = int(r.probs.top1)
+                                confidence = float(r.probs.top1conf)
+                                alphabet = str(r.names[class_id])
+                            elif r.boxes is not None and len(r.boxes) > 0:
+                                top_idx = int(r.boxes.cls[0].item())
+                                confidence = float(r.boxes.conf[0].item())
+                                alphabet = str(r.names[top_idx])
+                    except Exception as e2:
+                        print(f"YOLO fallback predict also failed: {e2}")
 
         elif current_model_type == "keras":
             keras_model_instance = loaded_models.get(current_model_name)
