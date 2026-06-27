@@ -394,11 +394,18 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
             if model_instance:
                 try:
                     results = model_instance.predict(image, verbose=False)
-                    if results and len(results) > 0 and results[0].probs is not None:
-                        probs = results[0].probs
-                        class_id = int(probs.top1)
-                        confidence = float(probs.top1conf)
-                        alphabet = str(results[0].names[class_id])
+                    if results and len(results) > 0:
+                        r = results[0]
+                        if r.probs is not None:
+                            probs = r.probs
+                            class_id = int(probs.top1)
+                            confidence = float(probs.top1conf)
+                            alphabet = str(r.names[class_id])
+                        elif r.boxes is not None and len(r.boxes) > 0:
+                            boxes = r.boxes
+                            top_idx = int(boxes.cls[0].item())
+                            confidence = float(boxes.conf[0].item())
+                            alphabet = str(r.names[top_idx])
                 except Exception as e:
                     print(f"YOLO predict error: {e}")
 
