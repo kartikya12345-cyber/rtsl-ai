@@ -158,9 +158,21 @@ KERAS_CLASSES = [
 ]
 
 def load_yolo_model(path):
-    model = YOLO(path)
-    print(f"YOLO model loaded: task={model.task}")
-    return model
+    try:
+        model = YOLO(path, task="detect")
+        print(f"YOLO model loaded: task={model.task}")
+        return model
+    except Exception as e:
+        print(f"YOLO model load error (detect task): {e}")
+        import traceback
+        traceback.print_exc()
+        try:
+            model = YOLO(path, task="classify")
+            print(f"YOLO model re-loaded: task={model.task}")
+            return model
+        except Exception as e2:
+            print(f"YOLO model load error (classify task): {e2}")
+            raise
 
 def load_keras_model(path):
     return keras.models.load_model(path)
