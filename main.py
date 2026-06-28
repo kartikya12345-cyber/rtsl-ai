@@ -172,7 +172,11 @@ def load_keras_model(path):
     try:
         return keras.models.load_model(path, compile=False)
     except Exception:
-        return keras.models.load_model(path)
+        try:
+            return keras.models.load_model(path)
+        except Exception:
+            import tensorflow as tf
+            return tf.keras.models.load_model(path, compile=False)
 
 def load_mediapipe_hand_landmarker(path):
     from mediapipe.tasks import python
@@ -194,7 +198,7 @@ async def discover_models():
             model_path = os.path.normpath(os.path.join(root, file))
             if file.endswith(".pt"):
                 models_found.append({"name": file, "path": model_path, "type": "yolo"})
-            elif file.endswith(".keras"):
+            elif file.endswith(".keras") or file.endswith(".h5"):
                 models_found.append({"name": file, "path": model_path, "type": "keras"})
             elif file.endswith(".task") and "hand_landmarker" in file:
                 models_found.append({"name": file, "path": model_path, "type": "mediapipe_hand_landmarker"})
