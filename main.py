@@ -159,20 +159,21 @@ KERAS_CLASSES = [
 
 def load_yolo_model(path):
     try:
-        model = YOLO(path, task="detect")
+        model = YOLO(path)
         print(f"YOLO model loaded: task={model.task}")
         return model
     except Exception as e:
-        print(f"YOLO model load error (detect task): {e}")
+        print(f"YOLO model load error (auto): {e}")
         import traceback
         traceback.print_exc()
-        try:
-            model = YOLO(path, task="classify")
-            print(f"YOLO model re-loaded: task={model.task}")
-            return model
-        except Exception as e2:
-            print(f"YOLO model load error (classify task): {e2}")
-            raise
+        for task in ("detect", "classify", "segment"):
+            try:
+                model = YOLO(path, task=task)
+                print(f"YOLO model re-loaded: task={model.task}")
+                return model
+            except Exception:
+                continue
+        raise
 
 def load_keras_model(path):
     return keras.models.load_model(path)
@@ -423,12 +424,13 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
                 except Exception as e:
                     print(f"YOLO predict error (will retry via file): {e}")
                     import tempfile
+                    tmp_path = None
                     try:
                         tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-                        cv2.imwrite(tmp.name, image)
+                        tmp_path = tmp.name
                         tmp.close()
-                        results = model_instance(tmp.name, verbose=False)
-                        os.unlink(tmp.name)
+                        cv2.imwrite(tmp_path, image)
+                        results = model_instance(tmp_path, verbose=False)
                         if results and len(results) > 0:
                             r = results[0]
                             if r.probs is not None:
@@ -441,6 +443,9 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
                                 alphabet = str(r.names[top_idx])
                     except Exception as e2:
                         print(f"YOLO fallback predict also failed: {e2}")
+                    finally:
+                        if tmp_path and os.path.exists(tmp_path):
+                            os.unlink(tmp_path)
 
         elif current_model_type == "keras":
             keras_model_instance = loaded_models.get(current_model_name)
