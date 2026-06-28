@@ -169,7 +169,10 @@ def load_yolo_model(path):
 
 def load_keras_model(path):
     from tensorflow import keras
-    return keras.models.load_model(path, compile=False)
+    try:
+        return keras.models.load_model(path, compile=False)
+    except Exception:
+        return keras.models.load_model(path)
 
 def load_mediapipe_hand_landmarker(path):
     from mediapipe.tasks import python
