@@ -352,7 +352,7 @@ async def signup(user: User):
     try:
         cursor.execute(
             "INSERT INTO users (username, email, password, profile_photo) VALUES (?, ?, ?, ?)",
-            (user.username, user.email, hashed_password, user.profile_photo)
+            (user.username, user.email or "", hashed_password, user.profile_photo or "")
         )
         conn.commit()
         new_id = cursor.lastrowid
@@ -404,8 +404,14 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
         if current_model_type == "yolo":
             model_instance = loaded_models.get(current_model_name)
             if model_instance:
+                import tempfile
+                tmp_path = None
                 try:
-                    results = model_instance.predict(image, verbose=False)
+                    tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+                    tmp_path = tmp.name
+                    tmp.close()
+                    cv2.imwrite(tmp_path, image)
+                    results = model_instance(tmp_path, verbose=False)
                     if results and len(results) > 0:
                         r = results[0]
                         if r.probs is not None:
@@ -419,30 +425,10 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
                             confidence = float(boxes.conf[0].item())
                             alphabet = str(r.names[top_idx])
                 except Exception as e:
-                    print(f"YOLO predict error (will retry via file): {e}")
-                    import tempfile
-                    tmp_path = None
-                    try:
-                        tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-                        tmp_path = tmp.name
-                        tmp.close()
-                        cv2.imwrite(tmp_path, image)
-                        results = model_instance(tmp_path, verbose=False)
-                        if results and len(results) > 0:
-                            r = results[0]
-                            if r.probs is not None:
-                                class_id = int(r.probs.top1)
-                                confidence = float(r.probs.top1conf)
-                                alphabet = str(r.names[class_id])
-                            elif r.boxes is not None and len(r.boxes) > 0:
-                                top_idx = int(r.boxes.cls[0].item())
-                                confidence = float(r.boxes.conf[0].item())
-                                alphabet = str(r.names[top_idx])
-                    except Exception as e2:
-                        print(f"YOLO fallback predict also failed: {e2}")
-                    finally:
-                        if tmp_path and os.path.exists(tmp_path):
-                            os.unlink(tmp_path)
+                    print(f"YOLO predict error: {e}")
+                finally:
+                    if tmp_path and os.path.exists(tmp_path):
+                        os.unlink(tmp_path)
 
         elif current_model_type == "keras":
             keras_model_instance = loaded_models.get(current_model_name)
