@@ -4,3 +4,9 @@ __pycache__/
 *.pyc
 .env
 *.db
+render.yaml
+runtime.txt
+RTSL_AI_Report.md
+cd
+gh
+git
