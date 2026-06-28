@@ -355,8 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (models.length > 0) {
-                const firstModel = models[0];
-                updateCameraUI(firstModel.type);
+                const defaultModel = models.find(m => m.name.includes('best.pt') && m.type === 'yolo') || models[0];
+                modelSelect.value = JSON.stringify(defaultModel);
+                updateCameraUI(defaultModel.type);
             }
         } catch (err) {
             console.error("Model Loading Error:", err);
