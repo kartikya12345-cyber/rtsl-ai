@@ -1,18 +1,11 @@
 import os
 import asyncio
-import cv2
 import numpy as np
 import datetime
 import jwt
 
 from collections import deque
 from passlib.context import CryptContext
-import tensorflow as tf
-from tensorflow import keras
-import mediapipe as mp
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
-
 from database import conn, cursor
 
 from fastapi import (
@@ -35,8 +28,6 @@ class NoCacheHTMLMiddleware(BaseHTTPMiddleware):
         if request.url.path.endswith(".html") or request.url.path in ("/", ""):
             response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         return response
-
-from ultralytics import YOLO
 
 app = FastAPI(
     title="RTSL Real-Time Detection API"
@@ -158,6 +149,7 @@ KERAS_CLASSES = [
 ]
 
 def load_yolo_model(path):
+    from ultralytics import YOLO
     try:
         model = YOLO(path)
         print(f"YOLO model loaded: task={model.task}")
@@ -176,9 +168,12 @@ def load_yolo_model(path):
         raise
 
 def load_keras_model(path):
+    from tensorflow import keras
     return keras.models.load_model(path)
 
 def load_mediapipe_hand_landmarker(path):
+    from mediapipe.tasks import python
+    from mediapipe.tasks.python import vision
     base_options = python.BaseOptions(model_asset_path=path)
     options = vision.HandLandmarkerOptions(
         base_options=base_options,
@@ -385,6 +380,8 @@ async def predict(file: UploadFile = File(...), user_id: int = Form(0)):
                 "hand_count": 0, "hands": [], "buffer_progress": 0, "buffer_total": 45
             }
 
+        import cv2
+        import mediapipe as mp
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -655,6 +652,7 @@ async def debug_status():
     if _mediapipe_model_path and _mediapipe_model_path in loaded_models:
         try:
             import cv2
+            import mediapipe as mp
             import numpy as np
             test_img = np.zeros((480, 640, 3), dtype=np.uint8)
             test_img[:, :] = [180, 150, 130]
